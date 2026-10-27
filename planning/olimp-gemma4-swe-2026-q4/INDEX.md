@@ -4,6 +4,21 @@
 **Objetivo:** Vencer a **Gemma 4 Developer Agent Competition** (Kaggle) com um agente SWE multi-lane sobre `gemma-4-31b-it-qat-w4a16-ct`, **zero execução local**, treino/eval só em Kaggle L4x4.
 **Repo:** `rafasdiass/gemma4-swe-agent` (privado) · **Protocolo original:** [PROTOCOLO_ORIGINAL.md](PROTOCOLO_ORIGINAL.md)
 
+## Contexto e porquê desta planning
+
+**Origem (2026-10-27):** o root pediu pesquisa de hackathons para participar **solo, online, usando os agentes do Panteão** como vantagem. Varredura de calendários ativos (out/nov-dez/2026) comparou: LLM/Prompt Recovery (encerrado), agents/GMGT (grant, encerrado), GenAI (corporate), Healthtech (pré-inscrição, indefinido) e **Gemma 4 Developer Agent Competition**.
+
+**Por que esta:** única ativa com prazo que cabe na janela do root, prêmio real ($110k total: $65k main / $35k paper / $10k small model), **entry gratuita**, e — o decisivo — formato de agente autônomo em sandbox é **exatamente o formato que o Panteão já orquestra** (multi-agente, skills, ADK). A competição não exige treino massivo: aceita prompt engineering sobre o modelo base, com LoRA como teto de vantagem. Ou seja: o custo de entrada é baixo e a vantagem estrutural do nosso ecossistema é alta.
+
+**Restrições do root que moldaram o plano:**
+- **Solo:** um participante, apoiado pelo conselho Panteão (Ayla PO; execução via MCP).
+- **Zero execução local (DEC-002):** a máquina de quem planeja não roda 31B; treino/eval só em Kaggle L4x4 (grátis, 96GB, quota ~15h/sem efetivas). O orçamento de quota é a restrição mais dura do plano inteiro — por isso cada sprint tem cap de PESADO.
+- **Execução em outra máquina (A-05):** a planning foi gerada numa máquina e é **executada em outra**. Por isso a W0/T-08 existe: nada aqui presume ambiente local da máquina de origem.
+- **Modelo único 31B (DEC-001):** regra da competição; escolha do root pela capacidade de raciocínio, com custo de perder o small model bonus.
+- **Paper track (DEC-004):** $35k por um write-up que o esforço de qualquer jeito produz (métricas do eval são exigência de método) — submeter mesmo parcial até 12/nov.
+
+**O que esta planning NÃO é:** não é um plano de pesquisa em LLM; é um plano de **engenharia de entrega** — chegar ao `submission.zip` válido com a maior resolved rate que a quota Kaggle e o clock permitem, com submissão de segurança cedo (S4) e buffer de 72h no fim (S5).
+
 ## Contratos externos (fonte: página oficial da competição)
 
 - **Modelo ÚNICO obrigatório** (sem mistura): `gemma-4-31b-it-qat-w4a16-ct` (DEC-001).
