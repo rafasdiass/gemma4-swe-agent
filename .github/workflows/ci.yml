@@ -1,0 +1,108 @@
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  lint-and-typecheck:
+    name: Lint & Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install ruff mypy
+      
+      - name: Run Ruff
+        run: ruff check .
+      
+      - name: Run Ruff Format Check
+        run: ruff format --check .
+      
+      - name: Run MyPy
+        run: mypy . --ignore-missing-imports
+
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+      
+      - name: Run Tests
+        run: pytest tests/ -v --tb=short --cov=. --cov-report=xml
+      
+      - name: Upload Coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage.xml
+
+  validate-submission:
+    name: Validate Submission Structure
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Check submission.zip exists
+        run: |
+          if [ ! -f submission.zip ]; then
+            echo "ERROR: submission.zip not found"
+            exit 1
+          fi
+      
+      - name: Validate submission.zip structure
+        run: |
+          unzip -l submission.zip
+          # Check required files
+          unzip -p submission.zip agent.yaml > /dev/null || exit 1
+          unzip -p submission.zip configs/sampling.yaml > /dev/null || exit 1
+
+  dvc-sync:
+    name: DVC Sync
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      
+      - name: Install DVC
+        run: pip install dvc[s3]
+      
+      - name: Configure DVC
+        run: |
+          dvc remote add -d myremote ${{ secrets.DVC_REMOTE_URL }}
+          dvc remote modify myremote access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          dvc remote modify myremote secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      
+      - name: DVC Pull
+        run: dvc pull
+      
+      - name: DVC Push (on main)
+        if: github.ref == 'refs/heads/main'
+        run: dvc push

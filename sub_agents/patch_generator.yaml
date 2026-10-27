@@ -1,0 +1,24 @@
+# Patch Generator Sub-Agent (AgentTool)
+agent_id: "patch_generator"
+model: "gemma-4-31b-it-qat-w4a16-ct"
+description: "Patch implementation and code modification specialist"
+
+system_prompt: !include ../prompts/coder.md
+
+tools:
+  - read_file
+  - edit_file
+  - write_file
+  - run_command
+  - submit_patch
+
+sampling:
+  temperature: 0.2
+  top_p: 0.95
+  max_tokens: 8192
+
+capabilities:
+  - patch_generation
+  - code_modification
+  - test_driven_development
+  - style_compliance

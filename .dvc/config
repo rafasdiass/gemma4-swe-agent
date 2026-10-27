@@ -1,0 +1,9 @@
+[core]
+    remote = myremote
+    analytics = false
+
+['remote "myremote"']
+    url = s3://your-bucket/gemma4-swe-agent
+    # Configure via environment variables:
+    # DVC_REMOTE_URL, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+    # Or use `dvc remote modify myremote ...`

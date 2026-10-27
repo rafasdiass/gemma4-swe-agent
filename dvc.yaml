@@ -1,0 +1,117 @@
+# DVC Pipeline for Gemma 4 SWE Agent
+stages:
+  download_dataset:
+    cmd: bash scripts/download_dataset.sh
+    outs:
+      - data/raw/gemma4_dataset:
+          cache: true
+    desc: "Download and extract Kaggle competition dataset"
+
+  prepare_data:
+    cmd: python scripts/prepare_data.py
+    deps:
+      - data/raw/gemma4_dataset
+    outs:
+      - data/processed/train_issues.json:
+          cache: true
+      - data/processed/test_issues.json:
+          cache: true
+      - data/processed/embeddings/:
+          cache: true
+    desc: "Process dataset into training format"
+
+  train_lora_v1:
+    cmd: python scripts/train_lora.py --version v1 --model gemma-4-31b-it-qat-w4a16-ct --epochs 3 --lr 2e-4 --rank 128
+    deps:
+      - data/processed/train_issues.json
+      - scripts/train_lora.py
+      - requirements-lora.txt
+    outs:
+      - adapters/main_lora/v1/adapter_model.safetensors:
+          cache: true
+      - adapters/main_lora/v1/adapter_config.json:
+          cache: true
+      - adapters/tool_lora/v1/adapter_model.safetensors:
+          cache: true
+      - adapters/tool_lora/v1/adapter_config.json:
+          cache: true
+    params:
+      - model
+      - epochs
+      - lr
+      - rank
+    desc: "Train LoRA v1 baseline"
+
+  train_lora_v2:
+    cmd: python scripts/train_lora.py --version v2 --model gemma-4-31b-it-qat-w4a16-ct --epochs 3 --lr 2e-4 --rank 128 --multi-task
+    deps:
+      - data/processed/train_issues.json
+      - scripts/train_lora.py
+      - requirements-lora.txt
+    outs:
+      - adapters/main_lora/v2/adapter_model.safetensors:
+          cache: true
+      - adapters/main_lora/v2/adapter_config.json:
+          cache: true
+    params:
+      - model
+      - epochs
+      - lr
+      - rank
+    desc: "Train LoRA v2 multi-task"
+
+  train_dpo:
+    cmd: python scripts/train_dpo.py --base_model gemma-4-31b-it-qat-w4a16-ct --lora_path adapters/main_lora/v2 --epochs 2 --lr 1e-5
+    deps:
+      - adapters/main_lora/v2/adapter_model.safetensors
+      - data/processed/train_issues.json
+      - scripts/train_dpo.py
+    outs:
+      - adapters/main_lora/dpo/adapter_model.safetensors:
+          cache: true
+      - adapters/main_lora/dpo/adapter_config.json:
+          cache: true
+    desc: "DPO/RLHF training on LoRA v2"
+
+  assemble_agent:
+    cmd: python scripts/assemble_agent.py --version final
+    deps:
+      - agent.yaml
+      - configs/sampling.yaml
+      - configs/eval_config.yaml
+      - prompts/system.md
+      - prompts/analyzer.md
+      - prompts/coder.md
+      - prompts/verifier.md
+      - sub_agents/code_analyzer.yaml
+      - sub_agents/patch_generator.yaml
+      - sub_agents/verifier.yaml
+      - adapters/main_lora/final/adapter_model.safetensors
+      - adapters/main_lora/final/adapter_config.json
+      - adapters/tool_lora/final/adapter_model.safetensors
+      - adapters/tool_lora/final/adapter_config.json
+      - skills/repo_navigation/SKILL.md
+      - skills/test_generation/SKILL.md
+      - skills/patch_validation/SKILL.md
+    outs:
+      - submission.zip:
+          cache: true
+    desc: "Assemble final submission.zip"
+
+  validate_submission:
+    cmd: python scripts/validate_submission.py
+    deps:
+      - submission.zip
+      - scripts/validate_submission.py
+    desc: "Validate submission before Kaggle submit"
+
+  simulate_sandbox:
+    cmd: python scripts/simulate_sandbox.py --issues 50 --budget 43200
+    deps:
+      - submission.zip
+      - scripts/simulate_sandbox.py
+      - data/processed/test_issues.json
+    outs:
+      - simulation_results.json:
+          cache: true
+    desc: "Simulate 12h sandbox run on test issues"
