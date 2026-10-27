@@ -1,0 +1,10 @@
+# Sampling configuration for Gemma 4 31B
+temperature: 0.2
+top_p: 0.95
+top_k: 50
+max_tokens: 8192
+stop_sequences:
+  - "```"
+  - "###"
+  - "---"
+repetition_penalty: 1.05

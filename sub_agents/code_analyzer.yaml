@@ -1,0 +1,26 @@
+# Code Analyzer Sub-Agent (AgentTool)
+agent_id: "code_analyzer"
+model: "gemma-4-31b-it-qat-w4a16-ct"
+description: "Repository navigation and issue analysis specialist"
+
+system_prompt: !include ../prompts/analyzer.md
+
+tools:
+  - search_similar_code
+  - get_code_neighbors
+  - get_code_subgraph
+  - read_file
+  - run_command
+
+# Sampling optimized for analysis
+sampling:
+  temperature: 0.1
+  top_p: 0.9
+  max_tokens: 4096
+
+# Task types this agent handles
+capabilities:
+  - repo_navigation
+  - issue_analysis
+  - call_graph_tracing
+  - code_search

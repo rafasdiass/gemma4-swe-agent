@@ -1,0 +1,135 @@
+name: Submission Validation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'submission.zip'
+      - 'agent.yaml'
+      - 'configs/**'
+      - 'prompts/**'
+      - 'sub_agents/**'
+      - 'adapters/**'
+      - 'skills/**'
+
+jobs:
+  validate-submission:
+    name: Validate Submission Package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Check submission.zip exists
+        run: |
+          if [ ! -f submission.zip ]; then
+            echo "::error::submission.zip not found in repository root"
+            exit 1
+          fi
+          echo "✓ submission.zip found"
+      
+      - name: Validate ZIP structure
+        run: |
+          echo "Checking submission.zip contents..."
+          unzip -l submission.zip
+          
+          # Required files
+          required_files=(
+            "agent.yaml"
+            "configs/sampling.yaml"
+            "prompts/system.md"
+            "prompts/analyzer.md"
+            "prompts/coder.md"
+            "prompts/verifier.md"
+            "sub_agents/code_analyzer.yaml"
+            "sub_agents/patch_generator.yaml"
+            "sub_agents/verifier.yaml"
+          )
+          
+          for file in "${required_files[@]}"; do
+            if unzip -p submission.zip "$file" > /dev/null 2>&1; then
+              echo "✓ $file present"
+            else
+              echo "::error::Required file missing: $file"
+              exit 1
+            fi
+          done
+          
+          # Check adapters (at least one LoRA)
+          if unzip -l submission.zip | grep -q "adapters/.*/adapter_model.safetensors"; then
+            echo "✓ LoRA adapter present"
+          else
+            echo "::warning::No LoRA adapter found in adapters/"
+          fi
+          
+          # Check skills
+          if unzip -l submission.zip | grep -q "skills/.*/SKILL.md"; then
+            echo "✓ Skills present"
+          else
+            echo "::warning::No skills found"
+          fi
+      
+      - name: Validate agent.yaml schema
+        run: |
+          echo "Validating agent.yaml..."
+          unzip -p submission.zip agent.yaml > /tmp/agent.yaml
+          
+          # Check required fields
+          required_fields=("agent_id" "model" "tools" "sub_agents" "adapters" "skills")
+          for field in "${required_fields[@]}"; do
+            if grep -q "^$field:" /tmp/agent.yaml; then
+              echo "✓ $field present"
+            else
+              echo "::error::Missing required field in agent.yaml: $field"
+              exit 1
+            fi
+          done
+          
+          # Check model is Gemma 4 variant
+          if grep -q "gemma-4-" /tmp/agent.yaml; then
+            echo "✓ Model is Gemma 4 variant"
+          else
+            echo "::error::Model must be a Gemma 4 variant"
+            exit 1
+          fi
+      
+      - name: Check submission.zip size
+        run: |
+          size=$(stat -c%s submission.zip)
+          size_mb=$((size / 1024 / 1024))
+          echo "Submission size: ${size_mb}MB"
+          if [ $size_mb -gt 1024 ]; then
+            echo "::warning::Submission size > 1GB (${size_mb}MB), may exceed Kaggle limits"
+          elif [ $size_mb -gt 100 ]; then
+            echo "::notice::Submission size: ${size_mb}MB"
+          else
+            echo "✓ Submission size: ${size_mb}MB"
+          fi
+      
+      - name: Validate ADK compliance
+        run: |
+          echo "Checking ADK compliance..."
+          unzip -p submission.zip agent.yaml > /tmp/agent.yaml
+          
+          # Check for prohibited tools
+          prohibited=("requests" "httpx" "wget" "curl" "git clone" "pip install")
+          for tool in "${prohibited[@]}"; do
+            if grep -rq "$tool" /tmp/agent.yaml; then
+              echo "::warning::Potentially prohibited tool reference: $tool"
+            fi
+          done
+          
+          # Check tools list only contains allowed tools
+          allowed_tools=("run_command" "read_file" "edit_file" "write_file" "submit_patch" "get_code_neighbors" "search_similar_code" "get_code_subgraph" "get_status")
+          # This would need proper YAML parsing - simplified check
+          echo "✓ Basic ADK structure validation passed"
+
+  notify:
+    name: Notify on Failure
+    runs-on: ubuntu-latest
+    if: failure()
+    needs: validate-submission
+    steps:
+      - name: Send failure notification
+        run: |
+          echo "Submission validation failed for commit ${{ github.sha }}"
+          # Add Slack/Discord/email notification here

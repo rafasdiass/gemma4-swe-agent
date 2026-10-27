@@ -1,0 +1,5 @@
+# Git LFS for large model artifacts
+adapters/**/adapter_model.safetensors filter=lfs diff=lfs merge=lfs -text
+data/**/*.safetensors filter=lfs diff=lfs merge=lfs -text
+notebooks/*.ipynb filter=lfs diff=lfs merge=lfs -text
+*.zip filter=lfs diff=lfs merge=lfs -text
