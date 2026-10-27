@@ -19,6 +19,26 @@
 
 **O que esta planning NÃO é:** não é um plano de pesquisa em LLM; é um plano de **engenharia de entrega** — chegar ao `submission.zip` válido com a maior resolved rate que a quota Kaggle e o clock permitem, com submissão de segurança cedo (S4) e buffer de 72h no fim (S5).
 
+## Contexto de sessão (o que a máquina de execução precisa saber ao retomar)
+
+**Ambiente Panteão (da sessão de origem, 2026-10-27):**
+- Backend local `http://127.0.0.1:8090` (v2.0.5, `/healthz` ok), sessão c7cf5fcf destravada. Panteão root: `/Users/rafaeldias/.olimpo/runtime/panteao`.
+- **MCP panteao**: subir SEMPRE por `bash apps/backend/bin/mcp-launch.sh panteao-mcp.ts` (11 tools em 4 corredores, `panteao_invoke_agent`). **Nunca** `node panteao-mcp.ts` direto — quebra `ERR_MODULE_NOT_FOUND` em `stdio-stdout-guard.js` (causa real da sessão: tsx/loader; o launcher resolve node/tsx).
+- **Ayla é host-only**: NUNCA `panteao_invoke_agent({agentId:"ayla"})` — a Ayla orquestra, não é orquestrada.
+- Argus MCP falha com `ARGUS_HOST_FACTS_ABSENT` (ausente `/Users/rafaeldias/.olimpo/harness-facts/opencode.env`) — bloqueio conhecido, não perder tempo com ele na retomada.
+
+**Credenciais e contas:**
+- GitHub: conta pessoal **`rafasdiass`** (não org). **Lição A-03:** o token de `keys.env` NÃO tem escopo `workflow`; o keyring do `gh` TEM. **Nunca embutir token na URL do remote** — remote limpo (`https://github.com/rafasdiass/gemma4-swe-agent.git`), o `osxkeychain` resolve com o token certo. Sem escopo `workflow`, push de `.github/workflows/*` é rejeitado.
+- Kaggle: conta **`rafasdias`**, logada por OAuth (`~/.kaggle/credentials.json`, refresh KGRT_…). O `~/.kaggle/kaggle.json` antigo tem token **inválido** — ignorar. CLI v2.2.5 via pipx. Regras da competição já aceitas.
+- Neon (`olimpo`): acessível, mas **os pares de treino de lá NÃO servem** (A-02: formato conversa/auditoria ≠ issue→patch SWE-bench). Dados de treino vêm 100% do dataset oficial da competição (T-07).
+- Root (Rafael) é trusted principal: gate da Musa é CONSULTIVO pra ele, blocking pros demais agentes.
+
+**Estado de arte na sessão de origem (2026-10-27):**
+- Repo criado (id 1436120602, privado), **PR #1 aberto** com estrutura completa + esta planning: estrutura ADK (`agent.yaml`, `sub_agents/`, `skills/3`, `prompts/4`), scripts (`train_lora.py` QLoRA NF4 r=128 α=256, `simulate_sandbox.py`, `validate_submission.py`, `assemble_agent.py`, `prepare_data.py`, `download_dataset.sh`), workflows CI, `dvc.yaml`, requirements, README. Nada em `main` além do init: **`main` só promove via PR** (ver [GOVERNANCA_PIPELINE.md](GOVERNANCA_PIPELINE.md)).
+- Dataset (20.4GB): download iniciado e **caído em 2.7GB** (A-01), reiniciado e morto de novo por decisão de mover pra máquina de execução (A-05). Primeiro ato da S0 lá: T-01.
+
+**Governança do repo:** modelo Panteão — `dev` integra, `main` é promoção congelada, suite inteira SÓ na promoção `dev→main` (submit-check), submissão ao Kaggle só de commit promovido: ver [GOVERNANCA_PIPELINE.md](GOVERNANCA_PIPELINE.md) (régua de CI/CD e "deploy").
+
 ## Contratos externos (fonte: página oficial da competição)
 
 - **Modelo ÚNICO obrigatório** (sem mistura): `gemma-4-31b-it-qat-w4a16-ct` (DEC-001).
@@ -30,7 +50,7 @@
 
 ## Artefatos (PLANNING_FORMAT canônico)
 
-- [ROADMAP.md](ROADMAP.md) · [DESIGN.md](DESIGN.md)
+- [ROADMAP.md](ROADMAP.md) · [DESIGN.md](DESIGN.md) · [GOVERNANCA_PIPELINE.md](GOVERNANCA_PIPELINE.md) (main/dev, PRs, suite inteira só na promoção dev→main, regras de deploy/submissão)
 - requirements: [REQUIREMENTS](requirements/REQUIREMENTS.md) · [PRODUCT_BACKLOG](requirements/PRODUCT_BACKLOG.md) · [DEFINITION_OF_DONE](requirements/DEFINITION_OF_DONE.md)
 - sprints: [S0](sprints/SPRINT_0_BOOTSTRAP.md) · [S1](sprints/SPRINT_1_LORA_BASELINE.md) · [S2](sprints/SPRINT_2_AGENT_PIPELINE.md) · [S3](sprints/SPRINT_3_DPO_OTIMIZACAO.md) · [S4](sprints/SPRINT_4_SUBMISSAO_PAPER.md) · [S5](sprints/SPRINT_5_ENTREGA_FINAL.md)
 - decisoes: [DEC-001 modelo 31B](decisoes/DEC-001-modelo-31b.md) · [DEC-002 zero-local](decisoes/DEC-002-zero-local.md) · [DEC-003 pipeline multi-agente](decisoes/DEC-003-pipeline-multi-agente.md) · [DEC-004 paper track](decisoes/DEC-004-paper-track.md)

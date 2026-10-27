@@ -56,15 +56,15 @@ Máquina de execução com Panteão + gh + kaggle autenticados; dataset completo
 - **Depende de:** —
 - **Paralelizável com:** — (W0: tudo depende dela)
 
-### T-02 — CI verde no PR #1 e merge em main
+### T-02 — Pipeline de repo no modelo Panteão: `dev` integra, `main` promove, CI nos gatilhos certos
 - **Domínio:** Infra / CI / CD
 - **Classe:** LEVE
 - **Lead:** Zeus
 - **Apoio:** Hera
 - **Verificação:** Musa
 - **kernel-verificado:** Zeus (infra <- packages/agents/profiles/zeus/identity-kernel.md)
-- **Contrato de saída:** workflows `ci.yml`, `dvc-sync.yml`, `submit-check.yml` rodando verdes no PR #1; main atualizada por merge.
-- **DoD específico:** `gh pr checks 1` all PASS; main contém o merge.
+- **Contrato de saída:** [GOVERNANCA_PIPELINE.md](../GOVERNANCA_PIPELINE.md) implementado no repo: branch `dev` criada a partir de `main`; PR #1 (estrutura + planning) retargetado **lane → `dev`**; `ci.yml` rodando em PR→dev (ruff, mypy `scripts/`, pytest, `validate_submission.py --dry-run`); `submit-check.yml` (suite inteira + `--strict` + `dvc repro`) rodando **só em PR `dev`→`main`**; branch protection em `main` (review do root); `dvc-sync.yml` pós-merge.
+- **DoD específico:** PR→dev verde no `ci.yml`; `submit-check.yml` dispara só no PR de promoção; `main` protegida; `gh pr checks` all PASS; merge em `dev`.
 - **Depende de:** T-03, T-08
 - **Paralelizável com:** T-05
 

@@ -29,7 +29,7 @@
 - **Apoio:** Artemis
 - **Verificação:** Hefesto
 - **kernel-verificado:** Apolo (backend <- packages/agents/profiles/apolo/identity-kernel.md)
-- **Contrato de saída:** zip com `agent.yaml`, `configs/`, `prompts/`, `sub_agents/`, `adapters/lora-v{melhor}/`, `skills/` — só o que a spec pede, nada a mais.
+- **Contrato de saída:** zip com `agent.yaml`, `configs/`, `prompts/`, `sub_agents/`, `adapters/lora-v{melhor}/`, `skills/` — só o que a spec pede, nada a mais. **Construído de commit promovido a `main`** (ver [GOVERNANCA_PIPELINE](../GOVERNANCA_PIPELINE.md): main = deploy).
 - **DoD específico:** zip abre; soma de arquivos confere com a checklist da competição; adapter escolhido pela DEC da S3.
 - **Depende de:** S3-T-36
 - **Paralelizável com:** T-41
@@ -90,7 +90,7 @@
 - **Verificação:** Rafael (root)
 - **kernel-verificado:** Hera (fluxo <- packages/agents/profiles/hera/identity-kernel.md)
 - **Contrato de saída:** `submission.zip` enviada na plataforma com recibo (data/hora, versão); garante participação mesmo se algo quebre na S5.
-- **DoD específico:** recibo em `evidencias/S4_submission_seguranca.md`; entry deadline (25/nov) já coberto por estar joined.
+- **DoD específico:** recibo em `evidencias/S4_submission_seguranca.md` com **timestamp + SHA do commit promovido + SHA256 do zip + recibo da plataforma**; entry deadline (25/nov) já coberto por estar joined.
 - **Depende de:** T-42, T-43
 - **Paralelizável com:** T-46
 

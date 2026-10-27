@@ -54,7 +54,7 @@ Submissão final no ar até **29/nov 23:59 UTC** (folga de 72h para o deadline d
 - **Apoio:** Rafael (root, executa/valida)
 - **Verificação:** Rafael (root)
 - **kernel-verificado:** Hera (fluxo <- packages/agents/profiles/hera/identity-kernel.md)
-- **Contrato de saída:** submissão final (ou confirmação da de segurança) no ar com recibo oficial.
+- **Contrato de saída:** submissão final (ou confirmação da de segurança) no ar com recibo oficial; zip **promovido a `main`** (suite inteira verde no `submit-check.yml`) — submissão de artefato sem promoção é procisso de cega.
 - **DoD específico:** recibo em `evidencias/S5_final.md` com timestamp ≤ 29/nov 23:59 UTC.
 - **Depende de:** T-50
 - **Paralelizável com:** — (crítico)
