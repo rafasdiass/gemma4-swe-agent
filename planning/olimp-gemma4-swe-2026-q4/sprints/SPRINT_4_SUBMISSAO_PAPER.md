@@ -5,13 +5,15 @@
 **Objetivo:** `submission.zip` final validada, simulação completa ≤12h, **submissão de segurança** no Kaggle (antes da final), contingência pronta.
 **Ancoragem:** [ROADMAP M4](../ROADMAP.md) · [SPRINT_3](SPRINT_3_DPO_OTIMIZACAO.md)
 
+**Critério de entrada:** G-DPO FECHADO (DEC-005/DEC plano B decidida com recibo do stress).
+
 ## Meta do sprint
 `validate_submission.py` PASS no zip final + simulação 12h completa dentro do budget + submissão de segurança entregue com recibo **até 28/nov**.
 
 ## Paralelismo (cap calculado)
 | Campo | Valor |
 |-------|-------|
-| Host | local CPU (LEVE dominante) + Kaggle (só inferência da simulação) |
+| Host | máquina de execução (LEVE dominante) + Kaggle (só inferência da simulação) |
 | cap_leve_inicial | 6 |
 | cap_pesado_inicial | 1 |
 | Sprint mista? | sim |

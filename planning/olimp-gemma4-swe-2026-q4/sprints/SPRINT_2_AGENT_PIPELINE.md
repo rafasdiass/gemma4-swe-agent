@@ -5,18 +5,20 @@
 **Objetivo:** pipeline multi-agente E2E superando o baseline; skills genéricas exercitadas; **paper submetido no paper track até 12/nov**.
 **Ancoragem:** [ROADMAP M2](../ROADMAP.md) · [SPRINT_1](SPRINT_1_LORA_BASELINE.md)
 
+**Critério de entrada:** G-BASELINE FECHADO (LoRA v1 com recibo; sem v1 não há régua de comparação).
+
 ## Meta do sprint
 Pipeline completo (analyzer→coder→verifier com skills) com resolved rate em 10 issues **>** single-shot baseline (T-13). Paper no ar no paper track **antes de 12/nov 23:59 UTC**.
 
 ## Paralelismo (cap calculado)
 | Campo | Valor |
 |-------|-------|
-| Host | Kaggle L4x4 (PESADO: LoRA v2) + local CPU (LEVE) |
-| cap_leve_inicial | 6 |
+| Host | Kaggle L4x4 (PESADO: LoRA v2) + máquina de execução (LEVE) |
+| cap_leve_inicial | 6 (medido na S0/T-08) |
 | cap_pesado_inicial | 1 |
 | Sprint mista? | sim → PESADO domina |
 
-**Waves:** W1 = T-20, T-21, T-22 (leve) · W2 = **T-27 PAPER (12/nov — prioridade absoluta na data)** · W3 = T-23 (PESADO, LoRA v2 com dados de trajetória) · W4 = T-24, T-25, T-26.
+**Waves:** W1 = T-20, T-21, T-22 (leve) · W2 = T-23 (PESADO, LoRA v2) · W3 = T-24 (leve) · W4 = T-25, T-26 (leve) · **W5 = T-27 (paper — dependência T-26 fechada; prioridade absoluta na data: deadline 12/nov é imexível; subir o cronograma se W3 atrasar, cortando T-25 primeiro)**.
 
 ## Tasks
 

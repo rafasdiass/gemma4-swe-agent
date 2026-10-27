@@ -5,13 +5,15 @@
 **Objetivo:** primeiro treino LoRA completo em Kaggle L4x4, eval A/B contra baseline em 10 issues, esboço do paper com resultados preliminares.
 **Ancoragem:** [ROADMAP M1](../ROADMAP.md) · [SPRINT_0](SPRINT_0_BOOTSTRAP.md) (T-07 define os pares)
 
+**Critério de entrada:** G-BOOTSTRAP FECHADO (dataset + harness + ADR LoRA: sem eles não há treino nem régua).
+
 ## Meta do sprint
 LoRA v1 treinada (recibo W&B) com resolved rate em 10 issues **≥** baseline sem adapter. Paper esboçado (intro + método + resultados preliminares).
 
 ## Paralelismo (cap calculado)
 | Campo | Valor |
 |-------|-------|
-| Host | Kaggle L4x4 (PESADO) + local CPU (LEVE) |
+| Host | Kaggle L4x4 (PESADO) + máquina de execução (LEVE) |
 | cap_leve_inicial | 6 |
 | cap_pesado_inicial | 1 sessão Kaggle por vez (quota serializa) |
 | Sprint mista? | sim → PESADO domina: sessões de treino têm prioridade de quota |

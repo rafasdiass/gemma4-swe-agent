@@ -5,13 +5,15 @@
 **Objetivo:** LoRA v3 com DPO sobre trajetórias reais, sampling otimizado, stress test de 50 issues dentro do budget 12h.
 **Ancoragem:** [ROADMAP M3](../ROADMAP.md) · [SPRINT_2](SPRINT_2_AGENT_PIPELINE.md)
 
+**Critério de entrada:** G-PIPELINE FECHADO e T-27 resolvido (paper: submetido ou abandono com DEC).
+
 ## Meta do sprint
 Stress 50 issues: resolved rate LoRA v3 (DPO) **>** v2; tempo total medido **≤ 12h** extrapolado (≤14min/issue médio). Fallback decidido se DPO não bater v2.
 
 ## Paralelismo (cap calculado)
 | Campo | Valor |
 |-------|-------|
-| Host | Kaggle L4x4 (PESADO: DPO) + local CPU (LEVE) |
+| Host | Kaggle L4x4 (PESADO: DPO) + máquina de execução (LEVE) |
 | cap_leve_inicial | 6 |
 | cap_pesado_inicial | 1 |
 | Sprint mista? | sim → PESADO domina |

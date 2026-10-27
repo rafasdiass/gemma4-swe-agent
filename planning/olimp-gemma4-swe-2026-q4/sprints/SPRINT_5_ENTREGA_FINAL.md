@@ -5,13 +5,15 @@
 **Objetivo:** submissão final confirmada com recibo **com folga de 72h**, monitoração do leaderboard, encerramento.
 **Ancoragem:** [ROADMAP M5](../ROADMAP.md) · [SPRINT_4](SPRINT_4_SUBMISSAO_PAPER.md)
 
+**Critério de entrada:** G-SUBMISSAO FECHADO (submissão de segurança no ar com recibo).
+
 ## Meta do sprint
 Submissão final no ar até **29/nov 23:59 UTC** (folga de 72h para o deadline de 02/dez). Zero mudança estrutural depois disso — só hotfix blocker.
 
 ## Paralelismo (cap calculado)
 | Campo | Valor |
 |-------|-------|
-| Host | local CPU (LEVE) |
+| Host | máquina de execução (LEVE) |
 | cap_leve_inicial | 4 (sprint curta de contenção) |
 | cap_pesado_inicial | 0 (sem treino novo — freeze) |
 | Sprint mista? | não |

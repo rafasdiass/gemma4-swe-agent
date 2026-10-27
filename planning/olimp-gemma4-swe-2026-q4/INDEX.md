@@ -27,7 +27,7 @@
 
 | Sprint | Janela | Tema | Gate de saída |
 |---|---|---|---|
-| 0 | 27–31 out | Bootstrap: repo, CI, Kaggle, dataset, agent.yaml v0.1 | **G-BOOTSTRAP**: dataset extraído + harness mock PASS + CI verde |
+| 0 | 27–31 out | Bootstrap da **máquina de execução** (T-08/W0): clone, gh (workflow), kaggle, Panteão, DVC; dataset, agent.yaml v0.1 | **G-BOOTSTRAP**: dataset extraído + harness mock PASS + CI verde |
 | 1 | 03–07 nov | LoRA v1 baseline + dados SFT + esboço do paper | **G-BASELINE**: LoRA v1 ≥ baseline no harness mock (10 issues) |
 | 2 | 10–14 nov | Pipeline 3-agente + skills + **paper submetido (12/nov)** | **G-PIPELINE**: pipeline E2E ≥ baseline; **paper no ar** |
 | 3 | 17–21 nov | DPO + sampling + stress 50 issues | **G-DPO**: resolved rate > LoRA v2 no stress |

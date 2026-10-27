@@ -4,7 +4,8 @@
 
 | Task | Sprint | Classe | Lead | Prova | Medição |
 |---|---|---|---|---|---|
-| T-01 | S0 | LEVE | Atlas | `ls -lh` zip ≥20GB + issue lida | NAO-MEDIDO (download andando, A-01) |
+| T-08 | S0 | LEVE | Zeus | `gh pr checks 1` + `kaggle competitions list` + MCP no ar | NAO-MEDIDO (W0: tudo depende dela) |
+| T-01 | S0 | LEVE | Atlas | `ls -lh` zip ≥20GB + `unzip -t` + issue lida | NAO-MEDIDO (download é AQUI, na máquina de execução: A-05) |
 | T-02 | S0 | LEVE | Zeus | `gh pr checks 1` all PASS | NAO-MEDIDO |
 | T-03 | S0 | LEVE | Apolo | `python -c "yaml.safe_load(open('agent.yaml'))"` | NAO-MEDIDO |
 | T-04 | S0 | LEVE | Hefesto | `python scripts/simulate_sandbox.py --issue 1` | NAO-MEDIDO |
@@ -46,4 +47,4 @@
 | T-53 | S5 | LEVE | Gaia | mapa zero NAO-MEDIDO sem motivo | NAO-MEDIDO |
 | T-54 | S5 | LEVE | Hermes | retro com ≥3 lições | NAO-MEDIDO |
 
-**Total: 41 tasks** (S0: 7 · S1: 7 · S2: 8 · S3: 7 · S4: 7 · S5: 5). PESADO: T-11, T-12, T-23, T-31, T-42 (quota Kaggle, serializados). PESADO: T-11, T-12, T-23, T-31, T-42 (quota Kaggle, serializados).
+**Total: 42 tasks** (S0: 8 · S1: 7 · S2: 8 · S3: 7 · S4: 7 · S5: 5). PESADO: T-11, T-12, T-23, T-31, T-42 (quota Kaggle, serializados). Ordem de execução: W0 = T-08 (bootstrap da máquina de execução, A-05) → W1 = T-01/T-03/T-04 → resto por dependências. PESADO: T-11, T-12, T-23, T-31, T-42 (quota Kaggle, serializados).

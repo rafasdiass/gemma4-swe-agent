@@ -11,7 +11,7 @@
 
 | Sprint | Status | Gate | Observação |
 |---|---|---|---|
-| S0 | 🟡 aberta | G-BOOTSTRAP | dataset em download (A-01); PR #1 aberto |
+| S0 | 🟡 aberta | G-BOOTSTRAP | execução muda de máquina (A-05): T-08/W0 primeiro; download virou task T-01 lá; PR #1 aberto |
 | S1 | 🔵 planejada | G-BASELINE | — |
 | S2 | 🔵 planejada | G-PIPELINE + G-PAPER | paper 12/nov (A-04) |
 | S3 | 🔵 planejada | G-DPO | — |
