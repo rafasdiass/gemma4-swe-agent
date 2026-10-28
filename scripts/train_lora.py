@@ -648,6 +648,33 @@ def build_micro_model(vocab_size: int, max_positions: int) -> Any:
 # --- Real model loader (Kaggle L4x4) ------------------------------------------
 
 
+def unwrap_clippable_linear(model: Any) -> int:
+    """Replace Gemma4-modulated QAT wrapper modules with their inner nn.Linear.
+
+    The W4A16 checkpoint stores each projection as ``Gemma4ClippableLinear``
+    wrapping the real ``nn.Linear`` (A MEDIR NA S1 #3/V2 discovery: the SES-1
+    smoke hit ``ValueError: Target module Gemma4ClippableLinear is not
+    supported`` from peft). With weights already materialized, swapping the
+    wrapper for the inner linear is loss-free for LoRA purposes: the wrapper
+    only exists for inference-time clip bounds. Returns how many were swapped.
+    """
+    swaps = 0
+    replacements: list[tuple[Any, str, Any]] = []
+    for name, module in model.named_modules():
+        if type(module).__name__ != "Gemma4ClippableLinear":
+            continue
+        inner = getattr(module, "linear", None)
+        if inner is None:
+            continue
+        parent_name, _, attr = name.rpartition(".")
+        parent = model.get_submodule(parent_name) if parent_name else model
+        replacements.append((parent, attr, inner))
+        swaps += 1
+    for parent, attr, inner in replacements:
+        setattr(parent, attr, inner)
+    return swaps
+
+
 def load_real_model(
     model_path: str,
     lora: LoRATuning,
@@ -678,6 +705,9 @@ def load_real_model(
     base.config.use_cache = not gradient_checkpointing
     if gradient_checkpointing:
         base.gradient_checkpointing_enable()
+    swapped = unwrap_clippable_linear(base)
+    if swapped:
+        print(f"[train_lora] unwrap_clippable_linear: {swapped} módulos QAT desembrulhados")
     lora_config = peft.LoraConfig(
         r=lora.r,
         lora_alpha=lora.alpha,

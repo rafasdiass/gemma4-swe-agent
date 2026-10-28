@@ -166,6 +166,23 @@ def test_assistant_overflow_is_refused_not_truncated() -> None:
     assert reason == "assistant_overflow"
 
 
+def test_unwrap_clippable_linear_swaps_wrappers_with_inner_linear() -> None:
+    torch = pytest.importorskip("torch")
+    inner = torch.nn.Linear(4, 4, bias=False)
+
+    class Gemma4ClippableLinear(torch.nn.Module):
+        def __init__(self) -> None:
+            super().__init__()
+            self.linear = inner
+
+    module = torch.nn.Module()
+    module.q_proj = Gemma4ClippableLinear()
+    swapped = tl.unwrap_clippable_linear(module)
+    assert swapped == 1
+    assert type(module.q_proj) is torch.nn.Linear
+    assert module.q_proj.weight is inner.weight
+
+
 def test_pad_batch_never_leaks_into_loss() -> None:
     tokenizer = tl.MicroTokenizer()
     messages = [
