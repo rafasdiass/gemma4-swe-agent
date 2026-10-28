@@ -49,3 +49,13 @@ Smoke prévio com `--limit 5`: 6 tasks lidas, 5 pares, 1 descarte `sem_contexto`
 ## Observação de execução
 
 - Matching de snapshot por `instance_id` → `repo` slug funcionou de primeira: 128/129 casados (1 sem snapshot no zip, consistente com os 127/129 de graph+embeddings).
+
+## Probe de leak (verificação Afrodite T07_CONTEXTO_BASE_NÃO_VERIFICADO — executada 2026-10-28)
+
+Parecer da Afrodita: FECHA COM RESSALVA — única ressalva era a ausência de prova de que o contexto é a versão BASE. Probe rodada sobre o `pairs.jsonl` gerado:
+
+1. Varredura ingênua (linha adicionada presente no contexto): 31/128 pares com hits — sinal confundido por código similar entre arquivos vizinhos.
+2. Refino (run de ≥3 linhas adicionadas consecutivas): 7 candidatos.
+3. **Análise por arquivo (discriminativa)**: para cada arquivo-patch presente no contexto, linhas removidas do patch DEVEM estar no contexto (versão base) e adicionadas NÃO devem. Resultado: **0/128 com assinatura de leak** — nos 7 candidatos, as removidas estão presentes (ex.: rem 101/108, 70/70, 16/17, 20/20) e as adicionadas quase ausentes (0/56, 0/15, 3/21, 5/7). O contexto é a versão BASE.
+
+**Veredito da probe: LIMPO.** Os 128 pares estão aproveitáveis. A probe será commitada como `--check-leak` no `prepare_data.py` no próximo PR (repetível a cada regeneração).
