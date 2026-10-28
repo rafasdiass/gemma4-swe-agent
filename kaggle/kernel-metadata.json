@@ -1,0 +1,14 @@
+{
+  "id": "rafasdias/gemma4-01-data-exploration",
+  "title": "gemma4-01-data-exploration",
+  "code_file": "01_data_exploration.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": false,
+  "competition_sources": [],
+  "kernel_sources": [],
+  "dataset_sources": [],
+  "model_sources": []
+}
