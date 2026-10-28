@@ -12,3 +12,4 @@
 | R-08 | 12h de budget não fecha (~14min/issue) | média | alto | orçamento por issue no sampling (T-22); desistência com rationale; stress 50 issues mede cedo (T-34) | Atena |
 
 > Atualização: [SPRINT_HEALTH](SPRINT_HEALTH.md) diário; achados novos viram linha aqui + task.
+| R-09 | Dados privados do Neon atravessarem a borda da competicao (dataset Kaggle, prompts, paper) | baixa | critico | DEC-006 fail-closed: zero upload do corpus Neon; scan de borda por Hefesto antes de qualquer submit | Ayla |

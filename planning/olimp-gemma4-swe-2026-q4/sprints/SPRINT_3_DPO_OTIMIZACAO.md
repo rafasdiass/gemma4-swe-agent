@@ -106,3 +106,17 @@ Stress 50 issues: resolved rate LoRA v3 (DPO) **>** v2; tempo total medido **≤
 - **DoD específico:** decisão com recibo (números do T-34) — não vale "achismo".
 - **Depende de:** T-34
 - **Paralelizável com:** T-35
+
+### T-37 — Reasoning-distill para adapter auxiliar (OPCIONAL, double-gated)
+- **Domínio:** Dados / treino (exploração)
+- **Classe:** LEVE
+- **Lead:** Yara
+- **Apoio:** Atena
+- **Verificação:** Afrodite
+- **kernel-verificado:** Yara (analytics <- packages/agents/profiles/yara/identity-kernel.md)
+- **Origem:** DEC-006 §4 — o Neon tem ~milhares de pares longos de raciocínio real (SPEC/war-room/preflight, PT-BR); nenhum diff/patch.
+- **Contrato de saída:** DEC sem recibo = T-37 fechada com decisão "não roda"; com recibo: dataset destilado fora do repo + adapter `planner_lora` p/ um subagent read-only.
+- **Gates (fail-closed):** (a) Rules da competição permitirem treino com dado externo; (b) eval A/B do S2 não rebaixar o resolved rate com o adapter registrado.
+- **DoD específico:** nenhuma linha do corpus Neon pode subir (LGPD §D-006.2) — destilate é REESCRITO/sintético; veredicto medido, não opinado.
+- **Depende de:** T-34 (S2 fechada)
+- **Paralelizável com:** T-35, T-36
