@@ -1,0 +1,190 @@
+T-04 sandbox simulation — issue 2: stress de contexto: ciclos de delegacao repetidos (mede T09_R6)
+seed: root instruction + issue = 2547t
+--- fase seed: ctx=2547t calls=0 turns=0
+  [code_analyzer] search_similar_code -> 212 chars (sub ctx=2537t)
+  [code_analyzer] get_code_neighbors -> 307 chars (sub ctx=2613t)
+  [code_analyzer] read_file -> 544 chars (sub ctx=2749t)
+[root] delegate code_analyzer -> summary 2116 chars, custo no pai 550t (ctx=3097t)
+  [patch_generator] read_file -> 544 chars (sub ctx=2669t)
+  [patch_generator] edit_file -> 40 chars (sub ctx=2679t)
+[root] delegate patch_generator -> summary 2118 chars, custo no pai 551t (ctx=3648t)
+  [verifier] run_command -> 189 chars (sub ctx=2680t)
+  [verifier] read_file -> 505 chars (sub ctx=2806t)
+[root] delegate verifier -> summary 2111 chars, custo no pai 547t (ctx=4195t)
+  [code_analyzer] search_similar_code -> 212 chars (sub ctx=2537t)
+  [code_analyzer] get_code_neighbors -> 307 chars (sub ctx=2613t)
+  [code_analyzer] read_file -> 544 chars (sub ctx=2749t)
+[root] delegate code_analyzer -> summary 2116 chars, custo no pai 550t (ctx=4745t)
+  [patch_generator] read_file -> 544 chars (sub ctx=2669t)
+  [patch_generator] edit_file -> 33 chars (sub ctx=2677t)
+[root] delegate patch_generator -> summary 2118 chars, custo no pai 551t (ctx=5296t)
+  [verifier] run_command -> 189 chars (sub ctx=2680t)
+  [verifier] read_file -> 505 chars (sub ctx=2806t)
+[root] delegate verifier -> summary 2111 chars, custo no pai 547t (ctx=5843t)
+  [code_analyzer] search_similar_code -> 212 chars (sub ctx=2537t)
+  [code_analyzer] get_code_neighbors -> 307 chars (sub ctx=2613t)
+  [code_analyzer] read_file -> 544 chars (sub ctx=2749t)
+[root] delegate code_analyzer -> summary 2116 chars, custo no pai 550t (ctx=6393t)
+  [patch_generator] read_file -> 544 chars (sub ctx=2669t)
+  [patch_generator] edit_file -> 33 chars (sub ctx=2677t)
+[root] delegate patch_generator -> summary 2118 chars, custo no pai 551t (ctx=6944t)
+  [verifier] run_command -> 189 chars (sub ctx=2680t)
+  [verifier] read_file -> 505 chars (sub ctx=2806t)
+[root] delegate verifier -> summary 2111 chars, custo no pai 547t (ctx=7491t)
+  [code_analyzer] search_similar_code -> 212 chars (sub ctx=2537t)
+  [code_analyzer] get_code_neighbors -> 307 chars (sub ctx=2613t)
+  [code_analyzer] read_file -> 544 chars (sub ctx=2749t)
+[root] delegate code_analyzer -> summary 2116 chars, custo no pai 550t (ctx=8041t)
+  [patch_generator] read_file -> 544 chars (sub ctx=2669t)
+  [patch_generator] edit_file -> 33 chars (sub ctx=2677t)
+[root] delegate patch_generator -> summary 2118 chars, custo no pai 551t (ctx=8592t)
+  [verifier] run_command -> 189 chars (sub ctx=2680t)
+  [verifier] read_file -> 505 chars (sub ctx=2806t)
+[root] delegate verifier -> summary 2111 chars, custo no pai 547t (ctx=9139t)
+  [code_analyzer] search_similar_code -> 212 chars (sub ctx=2537t)
+  [code_analyzer] get_code_neighbors -> 307 chars (sub ctx=2613t)
+  [code_analyzer] read_file -> 544 chars (sub ctx=2749t)
+[root] delegate code_analyzer -> summary 2116 chars, custo no pai 550t (ctx=9689t)
+  [patch_generator] read_file -> 544 chars (sub ctx=2669t)
+  [patch_generator] edit_file -> 33 chars (sub ctx=2677t)
+[root] delegate patch_generator -> summary 2118 chars, custo no pai 551t (ctx=10240t)
+  [verifier] run_command -> 189 chars (sub ctx=2680t)
+  [verifier] read_file -> 505 chars (sub ctx=2806t)
+[root] delegate verifier -> summary 2111 chars, custo no pai 547t (ctx=10787t)
+  [code_analyzer] search_similar_code -> 212 chars (sub ctx=2537t)
+  [code_analyzer] get_code_neighbors -> 307 chars (sub ctx=2613t)
+  [code_analyzer] read_file -> 544 chars (sub ctx=2749t)
+[root] delegate code_analyzer -> summary 2116 chars, custo no pai 550t (ctx=11337t)
+  [patch_generator] read_file -> 544 chars (sub ctx=2669t)
+  [patch_generator] edit_file -> 33 chars (sub ctx=2677t)
+[root] delegate patch_generator -> summary 2118 chars, custo no pai 551t (ctx=11888t)
+  [verifier] run_command -> 189 chars (sub ctx=2680t)
+  [verifier] read_file -> 505 chars (sub ctx=2806t)
+[root] delegate verifier -> summary 2111 chars, custo no pai 547t (ctx=12435t)
+  [code_analyzer] search_similar_code -> 212 chars (sub ctx=2537t)
+  [code_analyzer] get_code_neighbors -> 307 chars (sub ctx=2613t)
+  [code_analyzer] read_file -> 544 chars (sub ctx=2749t)
+[root] delegate code_analyzer -> summary 2116 chars, custo no pai 550t (ctx=12985t)
+  [patch_generator] read_file -> 544 chars (sub ctx=2669t)
+  [patch_generator] edit_file -> 33 chars (sub ctx=2677t)
+[root] delegate patch_generator -> summary 2118 chars, custo no pai 551t (ctx=13536t)
+  [verifier] run_command -> 189 chars (sub ctx=2680t)
+  [verifier] read_file -> 505 chars (sub ctx=2806t)
+[root] delegate verifier -> summary 2111 chars, custo no pai 547t (ctx=14083t)
+  [code_analyzer] search_similar_code -> 212 chars (sub ctx=2537t)
+  [code_analyzer] get_code_neighbors -> 307 chars (sub ctx=2613t)
+  [code_analyzer] read_file -> 544 chars (sub ctx=2749t)
+[root] delegate code_analyzer -> summary 2116 chars, custo no pai 550t (ctx=4625t)
+  [patch_generator] read_file -> 544 chars (sub ctx=2669t)
+  [patch_generator] edit_file -> 33 chars (sub ctx=2677t)
+[root] delegate patch_generator -> summary 2118 chars, custo no pai 551t (ctx=5176t)
+  [verifier] run_command -> 189 chars (sub ctx=2680t)
+  [verifier] read_file -> 505 chars (sub ctx=2806t)
+[root] delegate verifier -> summary 2111 chars, custo no pai 547t (ctx=5723t)
+  [code_analyzer] search_similar_code -> 212 chars (sub ctx=2537t)
+  [code_analyzer] get_code_neighbors -> 307 chars (sub ctx=2613t)
+  [code_analyzer] read_file -> 544 chars (sub ctx=2749t)
+[root] delegate code_analyzer -> summary 2116 chars, custo no pai 550t (ctx=6273t)
+  [patch_generator] read_file -> 544 chars (sub ctx=2669t)
+  [patch_generator] edit_file -> 33 chars (sub ctx=2677t)
+[root] delegate patch_generator -> summary 2118 chars, custo no pai 551t (ctx=6824t)
+  [verifier] run_command -> 189 chars (sub ctx=2680t)
+  [verifier] read_file -> 505 chars (sub ctx=2806t)
+[root] delegate verifier -> summary 2111 chars, custo no pai 547t (ctx=7371t)
+  [code_analyzer] search_similar_code -> 212 chars (sub ctx=2537t)
+  [code_analyzer] get_code_neighbors -> 307 chars (sub ctx=2613t)
+  [code_analyzer] read_file -> 544 chars (sub ctx=2749t)
+[root] delegate code_analyzer -> summary 2116 chars, custo no pai 550t (ctx=7921t)
+  [patch_generator] read_file -> 544 chars (sub ctx=2669t)
+  [patch_generator] edit_file -> 33 chars (sub ctx=2677t)
+[root] delegate patch_generator -> summary 2118 chars, custo no pai 551t (ctx=8472t)
+  [verifier] run_command -> 189 chars (sub ctx=2680t)
+  [verifier] read_file -> 505 chars (sub ctx=2806t)
+[root] delegate verifier -> summary 2111 chars, custo no pai 547t (ctx=9019t)
+  [code_analyzer] search_similar_code -> 212 chars (sub ctx=2537t)
+  [code_analyzer] get_code_neighbors -> 307 chars (sub ctx=2613t)
+  [code_analyzer] read_file -> 544 chars (sub ctx=2749t)
+[root] delegate code_analyzer -> summary 2116 chars, custo no pai 550t (ctx=9569t)
+  [patch_generator] read_file -> 544 chars (sub ctx=2669t)
+  [patch_generator] edit_file -> 33 chars (sub ctx=2677t)
+[root] delegate patch_generator -> summary 2118 chars, custo no pai 551t (ctx=10120t)
+  [verifier] run_command -> 189 chars (sub ctx=2680t)
+  [verifier] read_file -> 505 chars (sub ctx=2806t)
+[root] delegate verifier -> summary 2111 chars, custo no pai 547t (ctx=10667t)
+  [code_analyzer] search_similar_code -> 212 chars (sub ctx=2537t)
+  [code_analyzer] get_code_neighbors -> 307 chars (sub ctx=2613t)
+  [code_analyzer] read_file -> 544 chars (sub ctx=2749t)
+[root] delegate code_analyzer -> summary 2116 chars, custo no pai 550t (ctx=11217t)
+  [patch_generator] read_file -> 544 chars (sub ctx=2669t)
+  [patch_generator] edit_file -> 33 chars (sub ctx=2677t)
+[root] delegate patch_generator -> summary 2118 chars, custo no pai 551t (ctx=11768t)
+  [verifier] run_command -> 189 chars (sub ctx=2680t)
+  [verifier] read_file -> 505 chars (sub ctx=2806t)
+[root] delegate verifier -> summary 2111 chars, custo no pai 547t (ctx=12315t)
+  [code_analyzer] search_similar_code -> 212 chars (sub ctx=2537t)
+  [code_analyzer] get_code_neighbors -> 307 chars (sub ctx=2613t)
+  [code_analyzer] read_file -> 544 chars (sub ctx=2749t)
+[root] delegate code_analyzer -> summary 2116 chars, custo no pai 550t (ctx=12865t)
+  [patch_generator] read_file -> 544 chars (sub ctx=2669t)
+  [patch_generator] edit_file -> 33 chars (sub ctx=2677t)
+[root] delegate patch_generator -> summary 2118 chars, custo no pai 551t (ctx=13416t)
+  [verifier] run_command -> 189 chars (sub ctx=2680t)
+  [verifier] read_file -> 505 chars (sub ctx=2806t)
+[root] delegate verifier -> summary 2111 chars, custo no pai 547t (ctx=13963t)
+  [code_analyzer] search_similar_code -> 212 chars (sub ctx=2537t)
+  [code_analyzer] get_code_neighbors -> 307 chars (sub ctx=2613t)
+  [code_analyzer] read_file -> 544 chars (sub ctx=2749t)
+[root] delegate code_analyzer -> summary 2116 chars, custo no pai 550t (ctx=4625t)
+  [patch_generator] read_file -> 544 chars (sub ctx=2669t)
+  [patch_generator] edit_file -> 33 chars (sub ctx=2677t)
+[root] delegate patch_generator -> summary 2118 chars, custo no pai 551t (ctx=5176t)
+  [verifier] run_command -> 189 chars (sub ctx=2680t)
+  [verifier] read_file -> 505 chars (sub ctx=2806t)
+[root] delegate verifier -> summary 2111 chars, custo no pai 547t (ctx=5723t)
+--- fase stress: ctx=5723t calls=98 turns=140
+========================================================================
+T-04 simulate_sandbox — issue 2: stress de contexto: ciclos de delegacao repetidos (mede T09_R6)
+========================================================================
+Budget por task (limites do harness):
+  tool_calls: 98/100 (submit_patch/get_status não contam)
+  turns: 140/500
+  tempo simulado: 20.1/60 min
+  output chars: 32683 (cap 5000/comando; truncamentos: 0)
+  read_file: truncamentos 0 (cap 150 linhas / 10000 chars)
+  tool errors (JSON, sem abortar): 13; tentativas em arquivo protegido: 0
+  uso por tool (invocações | chars | s simulados):
+    edit_file               14 |    469 |  140
+    get_code_neighbors      14 |   4298 |  112
+    read_file               42 |  22302 |  210
+    run_command             14 |   2646 |  630
+    search_similar_code     14 |   2968 |  112
+Contexto (janelas; compaction aos 14336):
+  root: seed=2547t peak=14633t final=5723t compactions=2
+  code_analyzer: peak=2749t
+  patch_generator: peak=2679t
+  verifier: peak=2806t
+Fases (ctx tokens | calls | turns):
+  seed         2547t   0 calls   0 turns
+  stress       5723t  98 calls 140 turns
+T09_R6 (saturação de contexto do pai):
+  delegações: 42; custo médio no pai por delegação: 549t (heurística chars/4)
+  custo médio por ciclo completo (3 delegações): 1648t
+  pai: seed=2547t peak=14633t final=5723t compactions=2
+  delegações entre duas compactions (projeção (14336-4096)/custo): 18
+  saturação dura exige mensagem única > 28672t: NÃO ocorreu
+  stress: 14 ciclos completos executados (7 tool calls/ciclo)
+  binding real: tool calls — 14 ciclos cabem no teto de 100 calls; contexto não é limite duro: compaction recorrente (2 compactions, peak 14633t) mantém o pai operante; cabem ~6 ciclos POR janela entre compactions (grandeza não comparável com o total da task)
+  RESPOSTA: com compaction aos 14336 o pai não satura duro por acúmulo; o custo real do ciclo é o budget compartilhado de tool calls — ver números acima.
+T09_R7 (thinking_budget vs janela de saída):
+  modelo: thinking e resposta dividem a MESMA janela max_output_tokens (semântica ADK/Gemini; números dos configs reais da submissão)
+  root: max_output=16384t thinking_budget=8192t headroom_resposta=8192t maior_turno=0t folga=16384t
+  code_analyzer: max_output=4096t thinking_budget=2048t headroom_resposta=2048t maior_turno=2048t folga=2048t
+  patch_generator: max_output=8192t thinking_budget=4096t headroom_resposta=4096t maior_turno=2048t folga=6144t
+  verifier: max_output=8192t thinking_budget=4096t headroom_resposta=4096t maior_turno=2048t folga=6144t
+  probes de fronteira no log ([probe]): thinking+resposta exatamente no limite cabe; 1 token a mais transborda
+Wall clock do mock: 0.03s (custo do instrumento)
+Nota: stress parou no ciclo 14: budget de tool calls seria estourado
+Nota: submit_patch não foi chamado; fallback do harness extraiu o git diff
+------------------------------------------------------------------------
+VEREDITO: PASS
+Log: D:\workspaces\gemma4-swe-agent\planning\olimp-gemma4-swe-2026-q4\evidencias\S0_t04_sim_issue2.log

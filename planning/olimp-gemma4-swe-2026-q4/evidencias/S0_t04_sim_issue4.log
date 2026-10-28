@@ -1,0 +1,68 @@
+T-04 sandbox simulation — issue 4: fallback de diff: ciclo completo sem submit_patch (cobre T04_6)
+seed: root instruction + issue = 2547t
+--- fase seed: ctx=2547t calls=0 turns=0
+  [code_analyzer] search_similar_code -> 291 chars (sub ctx=2551t)
+  [code_analyzer] get_code_neighbors -> 307 chars (sub ctx=2627t)
+  [code_analyzer] read_file -> 544 chars (sub ctx=2763t)
+[root] delegate code_analyzer -> summary 340 chars, custo no pai 101t (ctx=2648t)
+--- fase analyze: ctx=2648t calls=3 turns=4
+  [patch_generator] read_file -> 544 chars (sub ctx=2665t)
+  [patch_generator] edit_file -> 40 chars (sub ctx=2675t)
+  [patch_generator] run_command -> 189 chars (sub ctx=2722t)
+[root] delegate patch_generator -> summary 182 chars, custo no pai 63t (ctx=2711t)
+--- fase patch: ctx=2711t calls=6 turns=8
+  [verifier] run_command -> 189 chars (sub ctx=2676t)
+  [verifier] read_file -> 261 chars (sub ctx=2741t)
+[root] delegate verifier -> summary 202 chars, custo no pai 66t (ctx=2777t)
+--- fase verify: ctx=2777t calls=8 turns=11
+[root] run_command -> 189 chars (ctx=2824t)
+[root] get_status -> 106 chars (ctx=2850t)
+--- fase end-without-submit: ctx=2850t calls=9 turns=13
+========================================================================
+T-04 simulate_sandbox — issue 4: fallback de diff: ciclo completo sem submit_patch (cobre T04_6)
+========================================================================
+Budget por task (limites do harness):
+  tool_calls: 9/100 (submit_patch/get_status não contam)
+  turns: 13/500
+  tempo simulado: 3.0/60 min
+  output chars: 2660 (cap 5000/comando; truncamentos: 0)
+  read_file: truncamentos 0 (cap 150 linhas / 10000 chars)
+  tool errors (JSON, sem abortar): 0; tentativas em arquivo protegido: 0
+  uso por tool (invocações | chars | s simulados):
+    edit_file                1 |     40 |   10
+    get_code_neighbors       1 |    307 |    8
+    get_status               1 |    106 |    1
+    read_file                3 |   1349 |   15
+    run_command              3 |    567 |  135
+    search_similar_code      1 |    291 |    8
+Contexto (janelas; compaction aos 14336):
+  root: seed=2547t peak=2850t final=2850t compactions=0
+  code_analyzer: peak=2763t
+  patch_generator: peak=2722t
+  verifier: peak=2741t
+Fases (ctx tokens | calls | turns):
+  seed         2547t   0 calls   0 turns
+  analyze      2648t   3 calls   4 turns
+  patch        2711t   6 calls   8 turns
+  verify       2777t   8 calls  11 turns
+  end-without-submit   2850t   9 calls  13 turns
+T09_R6 (saturação de contexto do pai):
+  delegações: 3; custo médio no pai por delegação: 77t (heurística chars/4)
+  custo médio por ciclo completo (3 delegações): 230t
+  pai: seed=2547t peak=2850t final=2850t compactions=0
+  delegações entre duas compactions (projeção (14336-4096)/custo): 133
+  saturação dura exige mensagem única > 28672t: NÃO ocorreu
+  RESPOSTA: com compaction aos 14336 o pai não satura duro por acúmulo; o custo real do ciclo é o budget compartilhado de tool calls — ver números acima.
+T09_R7 (thinking_budget vs janela de saída):
+  modelo: thinking e resposta dividem a MESMA janela max_output_tokens (semântica ADK/Gemini; números dos configs reais da submissão)
+  root: max_output=16384t thinking_budget=8192t headroom_resposta=8192t maior_turno=2560t folga=13824t
+  code_analyzer: max_output=4096t thinking_budget=2048t headroom_resposta=2048t maior_turno=3072t folga=1024t
+  patch_generator: max_output=8192t thinking_budget=4096t headroom_resposta=4096t maior_turno=5120t folga=3072t
+  verifier: max_output=8192t thinking_budget=4096t headroom_resposta=4096t maior_turno=5120t folga=3072t
+  probes de fronteira no log ([probe]): thinking+resposta exatamente no limite cabe; 1 token a mais transborda
+Patch: 165 chars (fallback sem submit: sim); arquivos protegidos no patch: 0
+Wall clock do mock: 0.02s (custo do instrumento)
+Nota: submit_patch não foi chamado; fallback do harness extraiu o git diff
+------------------------------------------------------------------------
+VEREDITO: PASS
+Log: D:\workspaces\gemma4-swe-agent\planning\olimp-gemma4-swe-2026-q4\evidencias\S0_t04_sim_issue4.log
