@@ -1,22 +1,18 @@
-# Verifier Sub-Agent (AgentTool)
-agent_id: "verifier"
+# Verifier (segunda opinião independente; invocação rara, só em patch arriscada)
+name: "verifier"
 model: "gemma-4-31b-it-qat-w4a16-ct"
-description: "Test execution and patch validation specialist"
+description: "Independent patch review: run tests, check regressions, report PASS/FAIL with evidence. Delegate for a fresh-context review of a risky patch."
 
-system_prompt: !include ../prompts/verifier.md
+instruction: !include ../prompts/verifier.md
 
+# SEM submit_patch (encerrava a sessão na v0.1) e sem write — verifier só lê e executa
 tools:
   - run_command
   - read_file
-  - submit_patch
 
-sampling:
+generate_content_config:
   temperature: 0.1
   top_p: 0.9
-  max_tokens: 4096
-
-capabilities:
-  - test_execution
-  - regression_testing
-  - patch_validation
-  - quality_gates
+  max_output_tokens: 8192
+  thinking_config:
+    thinking_budget: 4096

@@ -1,26 +1,23 @@
-# Code Analyzer Sub-Agent (AgentTool)
-agent_id: "code_analyzer"
+# Code Analyzer (sub-agente de navegação — delegação de maior valor)
+name: "code_analyzer"
 model: "gemma-4-31b-it-qat-w4a16-ct"
-description: "Repository navigation and issue analysis specialist"
+# description É o contrato de delegação: o root lê isto para decidir invocar.
+description: "Repository navigation and issue analysis: code search, call-graph tracing, context synthesis. Delegate BEFORE editing when repo navigation is non-trivial."
 
-system_prompt: !include ../prompts/analyzer.md
+instruction: !include ../prompts/analyzer.md
 
+# Somente leitura/navegação — sem write, sem submit_patch, sem run_command
 tools:
   - search_similar_code
   - get_code_neighbors
   - get_code_subgraph
   - read_file
-  - run_command
 
-# Sampling optimized for analysis
-sampling:
+# Sampling inline (dict é permitido); mais frio e enxuto que o root:
+# navegação é mecânica, raciocínio mínimo, resposta curta (não satura o contexto do pai)
+generate_content_config:
   temperature: 0.1
   top_p: 0.9
-  max_tokens: 4096
-
-# Task types this agent handles
-capabilities:
-  - repo_navigation
-  - issue_analysis
-  - call_graph_tracing
-  - code_search
+  max_output_tokens: 4096
+  thinking_config:
+    thinking_budget: 2048

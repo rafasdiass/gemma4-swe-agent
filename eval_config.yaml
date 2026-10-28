@@ -1,0 +1,9 @@
+# Budget POR TASK (defaults do harness, explicitados para auditoria).
+# Os valores da sample_submission (1 min / 10 calls / 50 turns) são de TESTE — não copiar.
+# Sem desvio dos defaults: max_time 60min, 100 tool calls (submit_patch/get_status
+# não contam), 500 turns, 300s por comando.
+evaluation:
+  timeout_seconds: 300
+  max_tool_calls: 100
+  max_time_minutes: 60
+  max_turns: 500

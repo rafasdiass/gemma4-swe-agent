@@ -1,10 +1,14 @@
-# Sampling configuration for Gemma 4 31B
+# generate_content_config do agente RAIZ (Gemma 4 31B, contexto 32768, compaction 14336)
+# Campos permitidos SOMENTE: temperature, top_p, top_k, max_output_tokens,
+# presence_penalty, frequency_penalty, stop_sequences, response_mime_type, seed,
+# thinking_config. repetition_penalty NÃO EXISTE (A-12) — removido.
 temperature: 0.2
 top_p: 0.95
 top_k: 50
-max_tokens: 8192
-stop_sequences:
-  - "```"
-  - "###"
-  - "---"
-repetition_penalty: 1.05
+max_output_tokens: 16384
+thinking_config:
+  # >0 liga reasoning; via vLLM: omitir thinking_level, usar include_thoughts
+  include_thoughts: true
+  thinking_budget: 8192
+# stop_sequences REMOVIDOS de propósito: "```" cortaria o payload de edit_file
+# no meio de um argumento (bloco de código). Ver T09_R1 no parecer da Atena.
