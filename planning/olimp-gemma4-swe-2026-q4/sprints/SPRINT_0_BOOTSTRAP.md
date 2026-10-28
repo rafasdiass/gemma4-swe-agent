@@ -129,6 +129,7 @@ Máquina de execução com Panteão + gh + kaggle autenticados; dataset completo
 - **DoD específico:** recibo em `evidencias/S0_kaggle.md` com VRAM 96GB confirmada e quota restante.
 - **Depende de:** T-08
 - **Paralelizável com:** T-02, T-04
+- **STATUS 2026-10-28:** FECHADA — L4x4 provada em notebook anexado à competição (v2 COMPLETE): 4× NVIDIA L4, 23034 MiB cada (≈92GB reais de 96GB nominais), torch 2.11.0+cu128, CUDA 12.8, driver 580.178.04; quota `00:01/30h` → ~15h L4x4 efetivas/semana (taxa 2×, A-14); Persona KYC concluída pelo root (desbloqueia submissão e L4x4). Recibo: `evidencias/S0_kaggle.md`. Kernel probe: `rafasdias/notebook13c50a51cf` (internet OFF).
 
 ### T-06 — ADR da estratégia LoRA (QLoRA 4-bit, r/alpha, sessões)
 - **Domínio:** Arquitetura / análise
