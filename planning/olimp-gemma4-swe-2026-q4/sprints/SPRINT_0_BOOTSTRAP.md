@@ -116,6 +116,7 @@ Máquina de execução com Panteão + gh + kaggle autenticados; dataset completo
 - **DoD específico:** `python scripts/simulate_sandbox.py --issue 1` PASS (exit 0) com log em `evidencias/`.
 - **Depende de:** T-01
 - **Paralelizável com:** T-02
+- **STATUS 2026-10-28:** FECHADA — `--issue 1..4` todos exit 0 (logs em `evidencias/S0_t04_sim_issue{1..4}.log`); 27 testes; verificação da Atena: FECHA COM RESSALVA (A-13). T09_R6 e T09_R7 MEDIDOS; T04_1/T04_2/T04_3/T04_4/T04_6 corrigidos; T04_5/T04_7 → insumo obrigatório da S1.
 
 ### T-05 — Prova de vida Kaggle L4x4 (quota + GPU)
 - **Domínio:** Infra / quota
@@ -152,3 +153,4 @@ Máquina de execução com Panteão + gh + kaggle autenticados; dataset completo
 - **DoD específico:** ≥1.000 pares válidos ou justificativa do teto real; zero par com patch vazio.
 - **Depende de:** T-01
 - **Paralelizável com:** T-06
+- **STATUS 2026-10-28:** FECHADA — run completa no zip real: 128/129 pares (1 sem snapshot), 0 patch vazio, 0 duplicado, teto ≤129 justificado (recibo `evidencias/S0_t07_pairs.md`); 2 pares >32k tokens → filtro no treino (S1); 39 testes no repo. Verificação (Afrodite) pendente de dispatch.
