@@ -6,10 +6,7 @@ Supports single-task, multi-task, and DPO training modes.
 
 import argparse
 import json
-import os
-import sys
 from pathlib import Path
-from typing import Optional
 
 import torch
 from datasets import load_dataset
@@ -19,11 +16,11 @@ from transformers import (
     AutoTokenizer,
     BitsAndBytesConfig,
     TrainingArguments,
-    Trainer,
 )
-from trl import SFTTrainer, DPOTrainer
+from trl import DPOTrainer, SFTTrainer
 
-def parse_args():
+
+def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Train LoRA for Gemma 4 31B")
     parser.add_argument("--version", required=True, choices=["v1", "v2", "dpo", "final"])
     parser.add_argument("--model", default="google/gemma-4-31b-it-qat-w4a16-ct")
@@ -40,9 +37,10 @@ def parse_args():
     parser.add_argument("--wandb", action="store_true")
     return parser.parse_args()
 
-def load_model_and_tokenizer(model_name: str, rank: int, alpha: int):
+
+def load_model_and_tokenizer(model_name: str, rank: int, alpha: int) -> tuple:
     """Load Gemma 4 31B with QLoRA 4-bit quantization."""
-    
+
     # 4-bit quantization config
     bnb_config = BitsAndBytesConfig(
         load_in_4bit=True,
@@ -50,12 +48,12 @@ def load_model_and_tokenizer(model_name: str, rank: int, alpha: int):
         bnb_4bit_compute_dtype=torch.bfloat16,
         bnb_4bit_use_double_quant=True,
     )
-    
+
     # Load tokenizer
     tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = "right"
-    
+
     # Load model with 4-bit quantization
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
@@ -64,63 +62,70 @@ def load_model_and_tokenizer(model_name: str, rank: int, alpha: int):
         trust_remote_code=True,
         torch_dtype=torch.bfloat16,
     )
-    
+
     # Prepare for k-bit training
     model = prepare_model_for_kbit_training(model)
-    
+
     # LoRA config
     lora_config = LoraConfig(
         r=rank,
         lora_alpha=alpha,
         target_modules=[
-            "q_proj", "v_proj", "k_proj", "o_proj",
-            "gate_proj", "up_proj", "down_proj",
+            "q_proj",
+            "v_proj",
+            "k_proj",
+            "o_proj",
+            "gate_proj",
+            "up_proj",
+            "down_proj",
         ],
         lora_dropout=0.05,
         bias="none",
         task_type="CAUSAL_LM",
     )
-    
+
     # Apply LoRA
     model = get_peft_model(model, lora_config)
     model.print_trainable_parameters()
-    
+
     return model, tokenizer
 
-def format_training_data(example):
+
+def format_training_data(example: dict) -> dict:
     """Format issue data for SFT training."""
     # This would be customized based on the actual dataset format
     # Expected: issue_text, repo_context, gold_patch
     prompt = f"""<|user|>
-Issue: {example.get('issue_text', '')}
+Issue: {example.get("issue_text", "")}
 
-Repository: {example.get('repo_name', '')}
-Base commit: {example.get('base_commit', '')}
+Repository: {example.get("repo_name", "")}
+Base commit: {example.get("base_commit", "")}
 
 Generate a patch that fixes this issue.
 <|assistant|>
-{example.get('gold_patch', '')}"""
-    
+{example.get("gold_patch", "")}"""
+
     return {"text": prompt}
 
-def main():
+
+def main() -> None:
     args = parse_args()
-    
+
     # Setup output directory
     output_dir = Path(args.output_dir) / args.version
     output_dir.mkdir(parents=True, exist_ok=True)
-    
+
     # Load model and tokenizer
     print(f"Loading model: {args.model}")
     model, tokenizer = load_model_and_tokenizer(args.model, args.rank, args.alpha)
-    
+
     # Load dataset
     print(f"Loading data from: {args.data_path}")
     dataset = load_dataset("json", data_files=args.data_path, split="train")
-    
+
     # Format data
     dataset = dataset.map(format_training_data, remove_columns=dataset.column_names)
-    
+
     # Training arguments
     training_args = TrainingArguments(
         output_dir=str(output_dir),
@@ -139,7 +144,7 @@ def main():
         gradient_checkpointing=True,
         optim="paged_adamw_8bit",
     )
-    
+
     # Trainer
     if args.version == "dpo" and args.base_lora:
         # Load base LoRA for DPO
@@ -163,15 +168,15 @@ def main():
             packing=True,
             dataset_text_field="text",
         )
-    
+
     # Train
     print("Starting training...")
     trainer.train()
-    
+
     # Save final model
     trainer.save_model(str(output_dir))
     tokenizer.save_pretrained(str(output_dir))
-    
+
     # Save adapter config
     adapter_config = {
         "base_model_name_or_path": args.model,
@@ -180,17 +185,23 @@ def main():
         "r": args.rank,
         "lora_alpha": args.alpha,
         "target_modules": [
-            "q_proj", "v_proj", "k_proj", "o_proj",
-            "gate_proj", "up_proj", "down_proj",
+            "q_proj",
+            "v_proj",
+            "k_proj",
+            "o_proj",
+            "gate_proj",
+            "up_proj",
+            "down_proj",
         ],
         "lora_dropout": 0.05,
         "bias": "none",
     }
-    
+
     with open(output_dir / "adapter_config.json", "w") as f:
         json.dump(adapter_config, f, indent=2)
-    
+
     print(f"Training complete. Model saved to {output_dir}")
+
 
 if __name__ == "__main__":
     main()
