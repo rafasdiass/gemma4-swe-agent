@@ -142,6 +142,7 @@ Máquina de execução com Panteão + gh + kaggle autenticados; dataset completo
 - **DoD específico:** ADR com plano B (offload/redução de rank) explícito.
 - **Depende de:** T-05
 - **Paralelizável com:** T-07
+- **STATUS 2026-10-28:** FECHADA — **GATE-ROOT-01 fechado pelo root: base `gemma-4-31b-it-qat-w4a16-ct`** (A-16; despacho "Gemma 3 4B-it" era erro — bases permitidos verificados na página oficial: gemma-4-{31b,12b,e4b,e2b}-it-qat-w4a16-ct). DEC-005 revisada pela Atena e **ACEITA (condicionada à SES-1)**: LoRA direto no checkpoint QAT W4A16 sem bitsandbytes, r=16/alpha=32/dropout 0.05/todos os 7 lineares (memorização: ~150M+ params treináveis vs ~1M tokens/época), dado (drop >32k, truncar contexto nos >16k, holdout 12.5%, K=2, 5 épocas, LR 1e-4, loss só no assistant, seq len 16384), est. ~26–40GB dos 92GB via device_map em 4 L4s (probes ≥2 GPUs cada: máx 2 paralelos), 4 sessões ≤6h, gatilhos G1..G7 (G7 = escalada ao root p/ base 12b caso OOM estrutural). Small Model Prize ($10k, E2B/E4B) anotado como decisão futura do root.
 
 ### T-07 — Estrutura de pares SFT definida (issue→patch)
 - **Domínio:** Dados / pipeline
