@@ -1,24 +1,20 @@
-# Patch Generator Sub-Agent (AgentTool)
-agent_id: "patch_generator"
+# Patch Generator (fallback para edição isolada; o root edita por padrão)
+name: "patch_generator"
 model: "gemma-4-31b-it-qat-w4a16-ct"
-description: "Patch implementation and code modification specialist"
+description: "Patch implementation for large isolated edits. The ROOT agent edits by default; delegate only for self-contained multi-file rewrites."
 
-system_prompt: !include ../prompts/coder.md
+instruction: !include ../prompts/coder.md
 
+# SEM submit_patch: só o root submete (submit_patch encerra a sessão inteira)
 tools:
   - read_file
   - edit_file
   - write_file
   - run_command
-  - submit_patch
 
-sampling:
+generate_content_config:
   temperature: 0.2
   top_p: 0.95
-  max_tokens: 8192
-
-capabilities:
-  - patch_generation
-  - code_modification
-  - test_driven_development
-  - style_compliance
+  max_output_tokens: 8192
+  thinking_config:
+    thinking_budget: 4096

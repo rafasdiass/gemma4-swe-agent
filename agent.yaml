@@ -1,50 +1,39 @@
-# Gemma 4 Developer Agent Competition - Agent Config (ADK Spec)
+# Gemma 4 Developer Agent Competition - Agent Config (schema SandboxedAgentConfig / ADK)
 # Model: gemma-4-31b-it-qat-w4a16-ct (31B, QAT W4A16)
-# Competition: Gemma 4 Developer Agent Competition
-# Planning: olimp-gemma4-swe-2026-q4
+# Planning: olimp-gemma4-swe-2026-q4 (T-09, migração A-12)
 
-agent_id: "gemma4-swe-agent"
+name: "gemma4-swe-agent"
 model: "gemma-4-31b-it-qat-w4a16-ct"
-description: "Autonomous Software Engineering Agent for Gemma 4 Developer Agent Competition"
+description: "Autonomous software engineering agent for the Gemma 4 Developer Agent Competition"
 
-# Sampling configuration
-sampling: !include configs/sampling.yaml
+# Instruction com templating do session.state ({problem_description}, {hints})
+instruction: !include prompts/system.md
 
-# System prompt
-system_prompt: !include prompts/system.md
-
-# Tools available in the competition sandbox
+# Tools do sandbox (as 9 reais). submit_patch fica SOMENTE no root:
+# chamar submit_patch encerra a sessão.
 tools:
   - run_command
   - read_file
   - edit_file
   - write_file
   - submit_patch
+  - get_status
   - get_code_neighbors
   - search_similar_code
   - get_code_subgraph
-  - get_status
 
-# Sub-agents (AgentTool)
+# Sub-agentes: LISTA de {config_path} (dict nomeado com !include era a divergência A-12).
+# Registro != invocação: a disciplina de delegação vive no prompt (prompts/system.md).
 sub_agents:
-  code_analyzer: !include sub_agents/code_analyzer.yaml
-  patch_generator: !include sub_agents/patch_generator.yaml
-  verifier: !include sub_agents/verifier.yaml
+  - config_path: sub_agents/code_analyzer.yaml
+  - config_path: sub_agents/patch_generator.yaml
+  - config_path: sub_agents/verifier.yaml
 
-# LoRA Adapters
-adapters:
-  main_lora:
-    adapter: adapters/main_lora/adapter_config.json
-    path: adapters/main_lora/adapter_model.safetensors
-  tool_lora:
-    adapter: adapters/tool_lora/adapter_config.json
-    path: adapters/tool_lora/adapter_model.safetensors
-
-# Skills
+# Skills: PATHS relativos (não nomes)
 skills:
-  - repo_navigation
-  - test_generation
-  - patch_validation
+  - skills/repo_navigation
+  - skills/test_generation
+  - skills/patch_validation
 
-# Evaluation config
-eval_config: !include configs/eval_config.yaml
+# Sampling canônico (era `sampling:`; `repetition_penalty` não existe no allowed_fields)
+generate_content_config: !include configs/sampling.yaml

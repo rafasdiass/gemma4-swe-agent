@@ -83,6 +83,27 @@ Máquina de execução com Panteão + gh + kaggle autenticados; dataset completo
 - **DoD específico:** YAML parse + campos obrigatórios presentes + nenhuma referência a modelo que não seja o 31B.
 - **Depende de:** —
 - **Paralelizável com:** T-01, T-04
+- **STATUS 2026-10-28:** parse PASSA (evidencias/S0_t03_agent_yaml.md), mas A-12 provou divergência semântica do schema real → rework virou **T-09**. Esta task fecha como "sintaxe validada"; a semântica migra na T-09.
+
+### T-09 — Rework do schema de submissão: migração pro ADK canônico (A-12)
+- **Domínio:** Implementação / contrato
+- **Classe:** LEVE
+- **Lead:** Atena (arquitetura) + Apolo (implementação)
+- **Verificação:** Artemis (contrato backend↔harness)
+- **Origem:** A-12 (divergência provada contra HARNESS_README + sample_submission, extraídos do dataset)
+- **Contrato de saída:** `agent.yaml`, `sub_agents/*.yaml`, `configs/sampling.yaml`, `eval_config.yaml` (raiz, chave `evaluation:`) 100% conformes ao schema `SandboxedAgentConfig`; `scripts/validate_submission.py` realinhado aos campos reais; teste de schema no `tests/`.
+- **DoD específico:**
+  1. `name`/`instruction`/`generate_content_config`/`max_output_tokens` no lugar de `agent_id`/`system_prompt`/`sampling`/`max_tokens`
+  2. `repetition_penalty` removido (fora do allowed_fields); `thinking_config` presente (thinking_budget ≤ 32768)
+  3. sub-agentes anexados via `tools:` (`agent_tool: {config_path}`) ou `sub_agents:` lista — sem dict nomeado
+  4. `adapter: <nome>` por agente (sem dict `adapters:` na raiz)
+  5. `eval_config.yaml` na raiz com `evaluation:` e budget por task coerente (60 min default; justificar desvio)
+  6. `skills:` com PATHS relativos (`skills/repo_navigation`)
+  7. `validate_submission.py` valida os campos NOVOS; `tests/test_smoke.py` atualizado e PASSANDO no CI
+- **Prova:** CI verde em PR→dev + dry-run PASSA + diff contra sample_submission campo a campo
+- **Depende de:** T-01 (schema documentado), T-02 (pipeline pra PR)
+- **Paralelizável com:** T-04 (harness mock valida o resultado)
+- **NOTA DE ESTRATÉGIA (vira insumo da S1):** orçamento real é 60 min/100 tool calls/500 turns POR TASK; sub-agentes custam turns do pai; `submit_patch` não conta no budget; arquivos de teste são protegidos (stripped); `thinking_config` é alavanca de raciocínio. O redesign da orquestração multi-agente parte desses números, não dos 12h antigos.
 
 ### T-04 — Harness de simulação local (mock das 9 tools)
 - **Domínio:** Testes / QA
