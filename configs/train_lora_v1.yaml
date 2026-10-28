@@ -1,0 +1,59 @@
+# T-11-prep — lever único do treino LoRA (DEC-005 variante B).
+# Script: scripts/train_lora.py · Apolo · 2026-10-28
+#
+# Divergências registradas vs DEC-005 (resolvidas pelo dispatch T-11):
+# - optimizer: adamw_torch_fused (DEC-005 §1 listava paged_adamw_8bit como
+#   default; sem bitsandbytes é o caminho primário aqui).
+# - warmup_ratio: 0.10 (dispatch) vs 5% (DEC-005 §2.6) — re-medido em SES-1.
+# - trl/datasets: DERRUBADOS do script (stdlib json + loop próprio) — menos
+#   wheels sob G5; conteúdo semântico idêntico.
+#
+# [A MEDIR NA S1] existem #1..#10 no header de scripts/train_lora.py; os que
+# o YAML controla: #5 (VRAM via alerts.vram_gib_per_gpu / lei G1>20GiB),
+# #6 (s/step via alerts.seconds_per_step / lei G2>45s), #10 ( políticas de
+# truncamento). O resto (pip freeze, path do checkpoint, load nativo QAT,
+# sharding, nomes de módulos, chat template, config class) é medido no
+# Kaggle e este arquivo não pretende decidir.
+
+base_model: google/gemma-4-31b-it-qat-w4a16-ct
+
+lora:
+  r: 16
+  alpha: 32          # 2x r (DEC-005); rsLoRA rejeitada até r>=64
+  dropout: 0.05      # -> 0.10 no gatilho G3
+  bias: none
+  target_modules:    # hipótese de nomes (Gemma 4 31B); confirmada via
+    - q_proj         # module_count no hook do script [A MEDIR NA S1 #7]
+    - k_proj
+    - v_proj
+    - o_proj
+    - gate_proj
+    - up_proj
+    - down_proj
+
+train:
+  seq_len: 16384             # DEC-005 §2.2
+  epochs: 5                  # DEC-005 §2.6
+  early_stop_patience: 2     # sobre val loss
+  lr: 0.0001                 # 1e-4, cosine (escrito como decimal p/ PyYAML)
+  warmup_ratio: 0.10         # divergência declarada (dispatch > DEC-005 5%)
+  grad_accum: 4
+  per_device_batch: 1
+  gradient_checkpointing: true
+  optimizer: adamw_torch_fused   # sem bitsandbytes (dispatch)
+  drop_over_tokens: 32768    # DEC-005 §2.1 (2 dos 128 pares)
+  max_grad_norm: 1.0
+  log_steps: 10
+
+data:
+  holdout_fraction: 0.125    # 12.5%, split determinístico por repo
+
+checkpoints:
+  output_dir: /kaggle/working/gemma4-adapter   # R-T06-6: /kaggle/working 20 GB
+  save_steps: 50             # a cada N optimizer steps [A MEDIR NA S1 #6]
+  save_total_limit: 3        # adapter-only (~110-220 MB após [A MEDIR NA S1
+                             # #5: tamanho real do adapter no 31B])
+
+alerts:
+  vram_gib_per_gpu: 20.0     # lei G1 (23034 MiB bruta; 20 GiB é o gatilho)
+  seconds_per_step: 45.0     # lei G2

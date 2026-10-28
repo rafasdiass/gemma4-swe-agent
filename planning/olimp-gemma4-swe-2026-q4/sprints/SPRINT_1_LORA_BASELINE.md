@@ -43,19 +43,20 @@ LoRA v1 treinada (recibo W&B) com resolved rate em 10 issues **≥** baseline se
 - **Verificação:** Hefesto
 - **kernel-verificado:** Apolo (backend <- packages/agents/profiles/apolo/identity-kernel.md)
 - **Contrato de saída:** `02_train_lora_v1` com smoke de 1k passos: loss converge, OOM não ocorre, tempo/passo medido.
-- **DoD específico:** log Kaggle + W&B run; VRAM pico < 90GB; tempo/passo documentado ⇒ extrapolação de sessão ≤6h.
-- **Depende de:** T-06, T-07
+- **DoD específico:** log Kaggle + W&B run; VRAM pico < 20 GiB POR GPU (G1 da DEC-005 — não <90GB total); tempo/passo documentado ⇒ extrapolação de sessão ≤6h; probes do 31B precisam ≥2 GPUs (máx 2 probes paralelos).
+- **Depende de:** T-06 (DEC-005 pronta: base 31B QAT), T-07
 - **Paralelizável com:** — (quota)
 
-### T-12 — Treino LoRA v1 completo (QLoRA r=128)
+### T-12 — Treino LoRA v1 completo (DEC-005: LoRA direto no 31B QAT, r=16/alpha=32)
 - **Domínio:** Treino
 - **Classe:** PESADO
 - **Lead:** Apolo
 - **Apoio:** Yara
 - **Verificação:** Hefesto
 - **kernel-verificado:** Apolo (backend <- packages/agents/profiles/apolo/identity-kernel.md)
+- **Premissas (DEC-005 revisada, ACEITA 2026-10-28):** base `gemma-4-31b-it-qat-w4a16-ct`; LoRA direto no QAT (sem bitsandbytes); r=16/alpha=32/dropout 0.05/7 lineares; seq len 16384 (truncar contexto, patch intacto); drop dos 2 pares >32k; holdout 12.5%; K=2 augmentação; 5 épocas early stop; LR 1e-4; loss só no assistant; ~26–40GB/92GB via device_map; gatilhos G1..G7 de falsificação.
 - **Contrato de saída:** `adapters/lora-v1/*.safetensors` + config de treino versionado + W&B run público no repo (DVC/LFS).
-- **DoD específico:** adapter carrega no harness local (`simulate_sandbox.py --adapter lora-v1`); loss final < smoke; checkpoint intermediário salvo (rollback).
+- **DoD específico:** adapter carrega no harness local (`simulate_sandbox.py --adapter lora-v1`); loss final < smoke; checkpoint intermediário salvo (rollback); adapter r=16 validado contra `validate_submission.py` antes de qualquer submit (R-T06-8).
 - **Depende de:** T-11
 - **Paralelizável com:** T-16
 
