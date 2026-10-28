@@ -1,7 +1,9 @@
 # SPRINT 1 — LoRA v1 baseline + esboço do paper (`T-10..T-16`)
 
-**Status:** 🔵 PLANEJADA
+**Status:** 🟡 EM CURSO (2026-10-28)
 **Janela:** 03–07 nov 2026 · **Gate de saída:** G-BASELINE
+
+**Despacho 2026-10-28 (pre-sprint):** T-11-prep fechada — `scripts/train_lora.py` + `configs/train_lora_v1.yaml` implementam a DEC-005 (PR #11, 45 passed + 2 testes de integração dry-mode verdes em torch CPU); `--check-leak` commitado no `prepare_data.py` (PR #10, A-15 repetível). Insumo do SES-1: os 10 itens `[A MEDIR NA S1]` no header do `train_lora.py`.
 **Objetivo:** primeiro treino LoRA completo em Kaggle L4x4, eval A/B contra baseline em 10 issues, esboço do paper com resultados preliminares.
 **Ancoragem:** [ROADMAP M1](../ROADMAP.md) · [SPRINT_0](SPRINT_0_BOOTSTRAP.md) (T-07 define os pares)
 
@@ -106,4 +108,5 @@ LoRA v1 treinada (recibo W&B) com resolved rate em 10 issues **≥** baseline se
 - **Contrato de saída:** `paper/` no repo: esqueleto LaTeX/Markdown com intro, método (pipeline + LoRA), resultados preliminares do T-13; **deadline real: submissão até 12/nov (S2)**.
 - **DoD específico:** seção de método completa; figuras do fluxograma F0 incluídas.
 - **Depende de:** T-13 (números) — pode começar paralelo com rascunho
+- **STATUS 2026-10-28:** DESPACHADA (Gaia — esqueleto; números entram quando T-13 fechar)
 - **Paralelizável com:** T-10..T-15
