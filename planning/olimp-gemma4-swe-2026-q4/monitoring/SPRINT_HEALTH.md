@@ -11,7 +11,7 @@
 
 | Sprint | Status | Gate | Observação |
 |---|---|---|---|
-| S0 | 🟡 aberta | G-BOOTSTRAP | T-08 7/8 ✓ (recibo). T-03 ✓ PASSA. T-02 ✓ FECHADA (PR #3 merged, CI SUCCESS em dev; falta branch protection em main — root). T-01: zip 20.42GB íntegro em C: (testzip OK, 524 entradas); schema pendente. Pendências: cap sob carga (W1); limite do modelo gratuito reduz subagentes (A-11) |
+| S0 | 🟡 aberta | G-BOOTSTRAP | T-08 7/8 ✓ (recibo). T-01 ✓ PASSA (zip íntegro + schema do harness: evidencias/S0_dataset.md). T-02 ✓ FECHADA (PR #3 merged, CI SUCCESS em dev; falta branch protection em main — root). T-03 REWORK (A-12: schema ADK canônico diverge do v0.1; budget real é 60 min/100 calls por task). Pendências: rework do agent.yaml; cap sob carga (W1); limite do modelo gratuito (A-11) |
 | S1 | 🔵 planejada | G-BASELINE | — |
 | S2 | 🔵 planejada | G-PIPELINE + G-PAPER | paper 12/nov (A-04) |
 | S3 | 🔵 planejada | G-DPO | — |
