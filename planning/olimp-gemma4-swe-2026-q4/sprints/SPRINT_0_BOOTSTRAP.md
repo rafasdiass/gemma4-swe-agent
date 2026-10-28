@@ -33,13 +33,17 @@ Máquina de execução com Panteão + gh + kaggle autenticados; dataset completo
 - **Verificação:** Hefesto
 - **kernel-verificado:** Atlas (dados <- packages/agents/profiles/atlas/identity-kernel.md)
 - **Contrato de saída:** `gemma-4-developer-agent.zip` (20.4GB) em disco **na máquina de execução**, extraído, com `evidencias/S0_dataset.md` documentando schema de 1 issue real (campos, formato do gold patch).
-- **Comandos de prova (executar na máquina de execução):**
+- **Comandos de prova (AJUSTADO 2026-10-28 por A-10 — decisão do root: o PESO fica no Kaggle, cópia local é só de trabalho):**
   ```
-  nohup kaggle competitions download -c gemma-4-developer-agent > kaggle-download.log 2>&1 &
-  # monitorar: ls -lh gemma-4-developer-agent.zip  (alvo: ≥20GB — o download JÁ CAIU uma vez em 2.7GB: R-03/A-01)
-  unzip -t gemma-4-developer-agent.zip && unzip -q gemma-4-developer-agent.zip -d dataset/
+  # Download em C:\gemma4-data (C: tem 97GB livres; D: não), com wrapper resiliente:
+  #   loop de até 40 tentativas + resume automático do CLI (o download cai ~1x/GB — padrão A-01)
+  #   script: tooling local do host; log em C:\gemma4-data\download.log
+  # Extração SELETIVA: unzip -t no zip inteiro (prova de integridade) + extração APENAS dos
+  #   arquivos de issues/metadata p/ schema (S0_dataset.md); snapshots de repo ficam NO ZIP.
+  # O zip pode ser deletado após T-01+T-04 se o disco apertar — o dataset canônico vive no Kaggle.
+  unzip -t gemma-4-developer-agent.zip
   ```
-- **Retomada (R-03):** se cair de novo, reiniciar o download (o CLI recomeça); alternativa documentada: notebook Kaggle baixa e exporta por API do dataset.
+- **Retomada (R-03):** o wrapper re-executa `kaggle competitions download --force` (o CLI resume do `.kaggle-partial`); queda de conexão não é mais evento manual.
 - **DoD específico:** `ls -lh` do zip ≥ 20GB; `unzip -t` PASS; 1 issue real aberta e lida; schema documentado.
 - **Depende de:** T-08
 - **Paralelizável com:** T-03, T-04

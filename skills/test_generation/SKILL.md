@@ -15,24 +15,25 @@ tags: [testing, pytest, regression, templates]
 import pytest
 from module_under_test import function_under_test
 
+
 class TestFunctionUnderTest:
     """Tests for function_under_test."""
-    
+
     def test_normal_case(self):
         """Test normal operation."""
         result = function_under_test(input_data)
         assert result == expected_output
-    
+
     def test_edge_case_empty_input(self):
         """Test empty input handling."""
         result = function_under_test([])
         assert result == []
-    
+
     def test_edge_case_none_input(self):
         """Test None input handling."""
         with pytest.raises(TypeError):
             function_under_test(None)
-    
+
     def test_boundary_condition(self):
         """Test boundary values."""
         result = function_under_test(boundary_value)
@@ -41,11 +42,14 @@ class TestFunctionUnderTest:
 
 ### Parametrized Tests
 ```python
-@pytest.mark.parametrize("input_data,expected", [
-    (input1, expected1),
-    (input2, expected2),
-    (edge_case, expected_edge),
-])
+@pytest.mark.parametrize(
+    "input_data,expected",
+    [
+        (input1, expected1),
+        (input2, expected2),
+        (edge_case, expected_edge),
+    ],
+)
 def test_function_parametrized(input_data, expected):
     assert function_under_test(input_data) == expected
 ```
@@ -56,9 +60,11 @@ def test_function_parametrized(input_data, expected):
 def sample_data():
     return {"key": "value", "list": [1, 2, 3]}
 
+
 @pytest.fixture
 def mock_dependency(mocker):
     return mocker.patch("module.dependency", return_value="mocked")
+
 
 def test_with_fixtures(sample_data, mock_dependency):
     result = function_under_test(sample_data)

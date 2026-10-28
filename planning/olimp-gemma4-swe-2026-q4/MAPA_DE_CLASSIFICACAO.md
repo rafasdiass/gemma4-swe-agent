@@ -4,10 +4,10 @@
 
 | Task | Sprint | Classe | Lead | Prova | Medição |
 |---|---|---|---|---|---|
-| T-08 | S0 | LEVE | Zeus | `gh pr checks 1` + `kaggle competitions list` + MCP no ar | NAO-MEDIDO (W0: tudo depende dela) |
-| T-01 | S0 | LEVE | Atlas | `ls -lh` zip ≥20GB + `unzip -t` + issue lida | NAO-MEDIDO (download é AQUI, na máquina de execução: A-05) |
-| T-02 | S0 | LEVE | Zeus | `gh pr checks 1` all PASS | NAO-MEDIDO |
-| T-03 | S0 | LEVE | Apolo | `python -c "yaml.safe_load(open('agent.yaml'))"` | NAO-MEDIDO |
+| T-08 | S0 | LEVE | Zeus | `gh pr checks 1` + `kaggle competitions list` + MCP no ar | MEDIDO 2026-10-28: 7/8 DoD ✓ (evidencias/S0_bootstrap_maquina.md); cap sob carga pendente p/ W1 |
+| T-01 | S0 | LEVE | Atlas | `ls -lh` zip ≥20GB + `unzip -t` + issue lida | EM ANDAMENTO 2026-10-28: download resiliente em `C:\gemma4-data` (A-10; extração seletiva, peso fica no Kaggle) |
+| T-02 | S0 | LEVE | Zeus | `gh pr checks 1` all PASS | NAO-MEDIDO (A-06: CI vermelho em main — primeiro prato) |
+| T-03 | S0 | LEVE | Apolo | `python -c "yaml.safe_load(open('agent.yaml'))"` | MEDIDO 2026-10-28: PASSA (evidencias/S0_t03_agent_yaml.md; schema ADK confere c/ HARNESS_README no zip) |
 | T-04 | S0 | LEVE | Hefesto | `python scripts/simulate_sandbox.py --issue 1` | NAO-MEDIDO |
 | T-05 | S0 | LEVE | Zeus | recibo `evidencias/S0_kaggle.md` | NAO-MEDIDO |
 | T-06 | S0 | LEVE | Atena | DEC-005 assinada | NAO-MEDIDO |

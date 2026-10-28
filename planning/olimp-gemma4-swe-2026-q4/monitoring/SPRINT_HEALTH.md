@@ -11,7 +11,7 @@
 
 | Sprint | Status | Gate | Observação |
 |---|---|---|---|
-| S0 | 🟡 aberta | G-BOOTSTRAP | execução muda de máquina (A-05): T-08/W0 primeiro; download virou task T-01 lá; PR #1 aberto |
+| S0 | 🟡 aberta | G-BOOTSTRAP | T-08 7/8 ✓ (recibo). T-03 ✓ PASSA (parse+modelo único; schema ADK confere c/ HARNESS_README quando o zip chegar). T-01: download em background no C: (A-10, wrapper resiliente). Pendências: cap sob carga (W1); CI vermelho em main (A-06); limite do modelo gratuito reduz subagentes (A-11) |
 | S1 | 🔵 planejada | G-BASELINE | — |
 | S2 | 🔵 planejada | G-PIPELINE + G-PAPER | paper 12/nov (A-04) |
 | S3 | 🔵 planejada | G-DPO | — |

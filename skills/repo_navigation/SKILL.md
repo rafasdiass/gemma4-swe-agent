@@ -13,28 +13,19 @@ tags: [navigation, search, graph, codebase]
 ### Issue Keyword Search
 ```python
 # Search for issue-related code
-results = search_similar_code(
-    query="memory leak QuerySet iterator",
-    k=20
-)
+results = search_similar_code(query="memory leak QuerySet iterator", k=20)
 ```
 
 ### Error Message Search
 ```python
 # Search for exact error messages
-results = search_similar_code(
-    query="MemoryError: unable to allocate",
-    k=15
-)
+results = search_similar_code(query="MemoryError: unable to allocate", k=15)
 ```
 
 ### Function/Class Name Search
 ```python
 # Search for specific identifiers
-results = search_similar_code(
-    query="def iterator QuerySet",
-    k=10
-)
+results = search_similar_code(query="def iterator QuerySet", k=10)
 ```
 
 ## Graph Navigation Patterns
@@ -48,20 +39,12 @@ test_results = search_similar_code(query="test_iterator", k=5)
 test_content = read_file(test_results[0].file, start_line=1, end_line=100)
 
 # 3. Trace call graph from test entry point
-neighbors = get_code_neighbors(
-    node="QuerySet.iterator",
-    edge_type="calls",
-    max_neighbors=50
-)
+neighbors = get_code_neighbors(node="QuerySet.iterator", edge_type="calls", max_neighbors=50)
 ```
 
 ### Find All Callers of a Function
 ```python
-callers = get_code_neighbors(
-    node="QuerySet._fetch_all",
-    edge_type="called_by",
-    max_neighbors=30
-)
+callers = get_code_neighbors(node="QuerySet._fetch_all", edge_type="called_by", max_neighbors=30)
 ```
 
 ### Get Subgraph for Multi-File Understanding

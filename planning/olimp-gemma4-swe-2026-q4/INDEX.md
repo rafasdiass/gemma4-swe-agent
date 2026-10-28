@@ -2,7 +2,7 @@
 
 **Data:** 2026-10-27 · **Decisora:** Ayla · **Aprovação:** Rafael (root)
 **Objetivo:** Vencer a **Gemma 4 Developer Agent Competition** (Kaggle) com um agente SWE multi-lane sobre `gemma-4-31b-it-qat-w4a16-ct`, **zero execução local**, treino/eval só em Kaggle L4x4.
-**Repo:** `rafasdiass/gemma4-swe-agent` (privado) · **Protocolo original:** [PROTOCOLO_ORIGINAL.md](PROTOCOLO_ORIGINAL.md)
+**Repo:** `rafasdiass/gemma4-swe-agent` (**PÚBLICO desde 2026-10-28** — decisão do root pós-quota Actions: repo público não consome minutos; reversível. REGRA: Competition Data — conteúdo de issue, gold patch, test patch — NUNCA entra no repo, nem em código, nem em evidência, nem em DVC; schema abstrato pode) · **Protocolo original:** [PROTOCOLO_ORIGINAL.md](PROTOCOLO_ORIGINAL.md)
 
 ## Contexto e porquê desta planning
 
@@ -70,4 +70,4 @@
 | 5 | 29 nov–02 dez | Entrega final + contingência | **G-FINAL**: submissão no Kaggle confirmada com recibo |
 
 ## Status
-🟡 Em execução — S0 aberta. PR #1 (estrutura do repo) aberto. Dataset (20.4GB) em download (reiniciado 2026-10-27, PID 91921). MCP panteao no ar (11 tools). PRs entram por review; main só por PR.
+🟡 Em execução — S0 aberta. **T-08: 7/8 fechados com prova** (recibo em evidencias/). **T-03: PASSA** (parse + modelo único; schema ADK confere c/ HARNESS_README quando o zip chegar). **T-01 em andamento**: download resiliente em `C:\gemma4-data` (A-10: peso fica no Kaggle, cópia local só de trabalho). DVC remote LOCAL por regra do evento (A-08). Kaggle: OAuth OK (`rafasdias`), competição principal + paper track com entry. Pendências: cap sob carga (W1); CI vermelho em main (A-06, T-02); limite do modelo gratuito no host (A-11, serialização). PRs entram por review; main só por PR.
