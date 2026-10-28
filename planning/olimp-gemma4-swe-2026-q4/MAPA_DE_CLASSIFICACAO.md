@@ -8,7 +8,7 @@
 | T-01 | S0 | LEVE | Atlas | `ls -lh` zip ≥20GB + `unzip -t` + issue lida | MEDIDO 2026-10-28: PASSA — zip 20.42GB íntegro (testzip OK, 524 entradas) + schema do harness documentado (evidencias/S0_dataset.md); gerou A-12 |
 | T-02 | S0 | LEVE | Zeus | `gh pr checks 1` all PASS | MEDIDO 2026-10-28: PR #3 merged, CI SUCCESS em dev (run 40702025010); submit-check virou gate de promoção dev→main; dvc-sync.yml deletado (A-08). Restante: branch protection em main (ação do root na UI) |
 | T-03 | S0 | LEVE | Apolo | `python -c "yaml.safe_load(open('agent.yaml'))"` | MEDIDO 2026-10-28: parse PASSA (evidencias/S0_t03_agent_yaml.md) MAS A-12 provou divergência de schema → REWORK migrado pra T-09 |
-| T-09 | S0 | LEVE | Atena+Apolo | CI verde + dry-run PASSA + diff campo a campo vs sample_submission | NAO-MEDIDO (criada 2026-10-28 a partir do A-12; arquitetura pela Atena, serializada) |
+| T-09 | S0 | LEVE | Atena+Apolo | CI verde + dry-run PASSA + diff campo a campo vs sample_submission | MEDIDO 2026-10-28: PR #4 merged, CI SUCCESS em dev (run 40704184656); zip montado e validado de ponta a ponta; 11 testes; riscos T09_R1/R2/R3/R4 resolvidos, R6/R7 medem no T-04 |
 | T-04 | S0 | LEVE | Hefesto | `python scripts/simulate_sandbox.py --issue 1` | NAO-MEDIDO |
 | T-05 | S0 | LEVE | Zeus | recibo `evidencias/S0_kaggle.md` | NAO-MEDIDO |
 | T-06 | S0 | LEVE | Atena | DEC-005 assinada | NAO-MEDIDO |
