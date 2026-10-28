@@ -55,6 +55,29 @@ patch text. First occurrence wins; duplicates are counted, not emitted.
 ZERO EMPTY-PATCH INVARIANT: lines whose gold patch is empty/missing are
 discarded with reason 'patch_vazio' and counted -- never emitted.
 
+LEAK PROBE (--check-leak, default OFF; makes the ad-hoc A-15 scan repeatable):
+SFT context must be the BASE (pre-patch) version of each touched file. When
+the emitted context already carries the patch's ADDED signal lines while the
+REMOVED ones are gone, the pair supervises the already-fixed code as if it
+were the base (distribution poisoning) and is DISCARDED with reason 'leak'.
+The probe runs inside build_pair -- after the empty-patch guard and context
+assembly, BEFORE anything reaches the dedup/sink stage -- so a leaking pair
+never generates an output line. Per touched file present in the context:
+
+  - signal lines: diff lines stripped of the +/- marker (trailing ws
+    stripped, leading indentation kept), >= 25 chars after strip, and NOT an
+    import ('import '/'from ') or a comment ('#'). Short/similar code across
+    neighbor files caused 31 hits in the naive whole-file scan (A-15, all 7
+    per-run candidates false); the discriminative per-file probe closed 0/128;
+  - file rule: add_in >= max(2, len(sig_add)//2) AND sig_rem non-empty AND
+    rem_in <= len(sig_rem)//3, where sig_* are signal lines and *_in counts
+    those present verbatim in the context body;
+  - ANY single leaking file discards the pair.
+
+Off by default: zero runtime cost and the pre-probe emission behavior is
+unchanged (test (c) pins this).
+
+
 CEILING JUSTIFICATION (DoD: '>= 1000 valid pairs OR justification of the real
 ceiling'): the dataset has exactly 129 SWE-bench-style tasks, each with ONE
 gold patch. The honest ceiling is therefore 129 pairs (minus discards for
@@ -124,6 +147,8 @@ class Config:
     max_context_chars: int
     per_file_chars: int
     include_hints: bool
+    # --check-leak: OFF by default (zero runtime cost; pinned by tests).
+    check_leak: bool = False
 
 
 @dataclass(frozen=True)
@@ -212,6 +237,92 @@ def touched_files_from_patch(patch: str) -> list[str]:
     for match in RE_PLUS_PLUS.finditer(patch):
         add(match.group(1))
     return paths
+
+
+def patch_lines_by_file(patch: str) -> dict[str, tuple[list[str], list[str]]]:
+    """Map '+++ b/<path>' -> (removed_lines, added_lines) of a unified diff.
+
+    Header lines ('---', '+++', 'diff --git', '@@') are never content. The
+    per-file path comes from the '+++ b/<path>' header, falling back to the
+    'diff --git' line; newline-marker lines ('\\'...) are ignored.
+    """
+    by_file: dict[str, tuple[list[str], list[str]]] = {}
+    current: str | None = None
+    for line in patch.splitlines():
+        if line.startswith("diff --git"):
+            match = RE_DIFF_GIT.match(line)
+            if match is not None:
+                current = match.group(2)
+            continue
+        if line.startswith("--- "):
+            continue
+        if line.startswith("+++ "):
+            match = RE_PLUS_PLUS.match(line)
+            path = match.group(1) if match is not None else current
+            if path not in ("", None, "/dev/null"):
+                current = path
+            continue
+        if current is None or line.startswith("@@"):
+            continue
+        if line.startswith("-"):
+            removed, added = by_file.setdefault(current, ([], []))
+            removed.append(line)
+        elif line.startswith("+"):
+            removed, added = by_file.setdefault(current, ([], []))
+            added.append(line)
+    return by_file
+
+
+def _signal_lines(diff_lines: list[str]) -> list[str]:
+    """Filter one file's +/- diff lines down to discriminative signal lines.
+
+    Noise filter calibrated on the ad-hoc A-15 scan: shorter than 25 chars,
+    imports and comments are dropped -- similar code across neighbor files
+    produced 31 naive-scan hits that were all false positives.
+    """
+    signal: list[str] = []
+    for raw in diff_lines:
+        text = raw[1:].rstrip()
+        stripped = text.lstrip()
+        if len(stripped) < 25:
+            continue
+        if stripped.startswith(("import ", "from ", "#")):
+            continue
+        signal.append(text)
+    return signal
+
+
+def file_is_leak(base_body: str, removed: list[str], added: list[str]) -> bool:
+    """True when ``base_body`` looks like the POST-patch version of the file.
+
+    Criterion calibrated on the A-15 probe: at least half of the added signal
+    lines are already present (>= max(2, len//2)) while at most a third of
+    the removed signal lines survive -- context from after the fix being
+    supervised as if it were the base.
+    """
+    sig_add = _signal_lines(added)
+    sig_rem = _signal_lines(removed)
+    if not sig_rem or not sig_add:
+        return False
+    add_in = sum(1 for line in sig_add if line in base_body)
+    rem_in = sum(1 for line in sig_rem if line in base_body)
+    return add_in >= max(2, len(sig_add) // 2) and rem_in <= len(sig_rem) // 3
+
+
+def leaking_file(patch: str, context_files: dict[str, str]) -> str | None:
+    """First touched-and-included file that leaks post-patch content, or None.
+
+    Only files touched by the patch AND present in the emitted context can be
+    probed (no body in context, nothing to prove); a single leaking file is
+    enough to flag the pair.
+    """
+    for path, (removed, added) in patch_lines_by_file(patch).items():
+        body = context_files.get(path)
+        if body is None:
+            continue
+        if file_is_leak(body, removed, added):
+            return path
+    return None
 
 
 def percentile(sorted_values: list[int], pct: float) -> int:
@@ -377,6 +488,11 @@ def build_pair(
         extra = snapshots.read_files(entry, neighbors, remaining, cfg.per_file_chars)
         context_files.update(extra)
 
+    if cfg.check_leak:
+        leaked_path = leaking_file(patch, context_files)
+        if leaked_path is not None:
+            return None, "leak"
+
     user_content = build_user_content(record, context_files, cfg.include_hints)
     dedup = pair_hash(record.problem_statement, patch)
     est_tokens = (len(SYSTEM_PROMPT) + len(user_content) + len(patch)) // CHARS_PER_TOKEN
@@ -518,6 +634,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="include hints_text in the user turn (default: excluded to match eval)",
     )
+    parser.add_argument(
+        "--check-leak",
+        action="store_true",
+        help=(
+            "discard pairs whose context already carries post-patch content "
+            "(A-15 leak probe made repeatable; counts under 'leak')"
+        ),
+    )
     return parser.parse_args(argv)
 
 
@@ -530,6 +654,7 @@ def main(argv: list[str] | None = None) -> int:
         max_context_chars=args.max_context_chars,
         per_file_chars=args.per_file_chars,
         include_hints=args.include_hints,
+        check_leak=args.check_leak,
     )
     run(cfg, sys.stdout)
     return 0

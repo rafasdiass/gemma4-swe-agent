@@ -280,3 +280,114 @@ def test_ensure_outside_repo_refuses_repo_paths() -> None:
 
     with tempfile.TemporaryDirectory() as tmp:
         prep.ensure_outside_repo(Path(tmp))
+
+
+# --- --check-leak: the A-15 leak probe made repeatable (synthetic fixtures) --
+
+PATCH_LEAK = (
+    "diff --git a/src/quote/prime.py b/src/quote/prime.py\n"
+    "--- a/src/quote/prime.py\n"
+    "+++ b/src/quote/prime.py\n"
+    "@@ -2,5 +2,5 @@\n"
+    "-    return legacy_divisor(total, rounds=2)\n"
+    "+    return modern_divisor(total, rounds=2)\n"
+    "-    cap = legacy_divisor(total, rounds=3)\n"
+    "+    cap = modern_divisor(total, rounds=3)\n"
+    "-    if total <= 0:\n"
+    "+    if total < 0:\n"
+)
+
+PRIME_BASE = (
+    "def compute(total):\n"
+    "    return legacy_divisor(total, rounds=2)\n"
+    "    cap = legacy_divisor(total, rounds=3)\n"
+    "    if total <= 0:\n"
+    "        raise ValueError('bad input')\n"
+)
+
+PRIME_POST = (
+    "def compute(total):\n"
+    "    return modern_divisor(total, rounds=2)\n"
+    "    cap = modern_divisor(total, rounds=3)\n"
+    "    if total < 0:\n"
+    "        raise ValueError('bad input')\n"
+)
+
+
+def _leak_zip(tmp_path: Path, snapshot: str, name: str) -> Path:
+    """Mini-zip with ONE task whose snapshot carries the given prime.py body."""
+    task = _task(
+        "acme__prime-9",
+        "acme/prime",
+        PATCH_LEAK,
+        problem="Divisor selection flips and hashing slows down.",
+    )
+    zip_path = tmp_path / name
+    with zipfile.ZipFile(zip_path, "w") as archive:
+        archive.writestr("data/tasks.jsonl", json.dumps(task) + "\n")
+        _add_tgz(archive, "snapshots/acme__prime-9.tgz", {"repo/src/quote/prime.py": snapshot})
+    return zip_path
+
+
+def test_check_leak_keeps_legit_base_context(tmp_path: Path) -> None:
+    # (a) base version: removed signal lines present, added lines absent -> emitted
+    zip_path = _leak_zip(tmp_path, PRIME_BASE, "leak_base.zip")
+    out = tmp_path / "out_base"
+    summary = _run(zip_path, out, check_leak=True)
+    assert summary["pairs_emitted"] == 1
+    assert "leak" not in summary["discarded_by_reason"]
+    user = next(
+        m["content"]
+        for p in _read_pairs(out)
+        for m in p["messages"]  # type: ignore[union-attr]
+        if m["role"] == "user"
+    )
+    assert isinstance(user, str)
+    assert "    return legacy_divisor(total, rounds=2)" in user
+    assert "modern_divisor(total, rounds=2)" not in user
+
+
+def test_check_leak_discards_fabricated_post_patched_context(tmp_path: Path) -> None:
+    # (b) post-patch version in context: added signal present, removed gone -> leak
+    zip_path = _leak_zip(tmp_path, PRIME_POST, "leak_post.zip")
+    out = tmp_path / "out_post"
+    summary = _run(zip_path, out, check_leak=True)
+    assert summary["pairs_emitted"] == 0
+    assert summary["discarded_by_reason"]["leak"] == 1
+    assert _read_pairs(out) == []
+
+
+def test_flag_off_keeps_current_emission_behavior(tmp_path: Path) -> None:
+    # (c) probe OFF: today's behavior unchanged, post-patch context still emitted
+    zip_path = _leak_zip(tmp_path, PRIME_POST, "leak_off.zip")
+    out = tmp_path / "out_off"
+    summary = _run(zip_path, out)
+    assert summary["pairs_emitted"] == 1
+    assert "leak" not in summary["discarded_by_reason"]
+
+
+def test_patch_lines_by_file_headers_are_not_content() -> None:
+    by_file = prep.patch_lines_by_file(PATCH_LEAK)
+    removed, added = by_file["src/quote/prime.py"]
+    assert sum("legacy_divisor" in line for line in removed) == 2
+    assert sum("modern_divisor" in line for line in added) == 2
+    assert all(not line.startswith(("---", "+++", "diff", "@@")) for line in removed + added)
+
+
+def test_file_is_leak_discriminates_base_from_post() -> None:
+    removed = ["-    return legacy_divisor(total, rounds=2)"]
+    added = [
+        "+    return modern_divisor(total, rounds=2)",
+        "+    cap = modern_divisor(total, rounds=3)",
+    ]
+    assert prep.file_is_leak(PRIME_POST, removed, added)
+    assert not prep.file_is_leak(PRIME_BASE, removed, added)
+    # a single added signal line cannot cross the add_in >= max(2, ...) floor
+    assert not prep.file_is_leak(PRIME_POST, removed, added[:1])
+
+
+def test_file_is_leak_ignores_import_and_short_noise() -> None:
+    removed = ["-import something.long_enough.to.count", "-# a comment line but quite long"]
+    added = ["+    value = transform_legacy_math(total, rounds=2)"]
+    # removed-only noise lines do not flag a clean base (no surviving rem signal)
+    assert not prep.file_is_leak(PRIME_BASE, removed, added)
