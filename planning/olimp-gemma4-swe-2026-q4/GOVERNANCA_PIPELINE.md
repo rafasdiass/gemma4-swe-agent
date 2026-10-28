@@ -24,7 +24,15 @@
 |---|---|---|---|
 | `ci.yml` | PR → `dev` | **Gate de lane:** lint (ruff), tipos (mypy em `scripts/`), unit (pytest), `validate_submission.py --dry-run` | PR vermelho não mergeia. Sem exceção, sem "é só warning". |
 | `submit-check.yml` | PR **`dev` → `main`** | **Gate de promoção:** a suite inteira + `--strict` + `dvc repro --force-all` + conferência de orçamento extrapolado | Único lugar onde a suite inteira roda. Verde = elegível a "deploy" (submissão). |
-| `dvc-sync.yml` | merge em `main` | Empurra adapters/artefatos DVC pro remote S3/GCS | Falha aqui NÃO bloqueia submissão se o zip já foi construído; bloqueia a próxima. |
+| `dvc-sync.yml` | merge em `main` | Empurra adapters/artefatos DVC pro remote S3/GCS | **OBSOLETO por A-08 (2026-10-28): remote DVC agora é LOCAL** (`D:\dvcstore\gemma4-swe-agent`) — vira no-op ou sai do pipeline na T-02. Falha aqui NÃO bloqueia submissão se o zip já foi construído; bloqueia a próxima. |
+
+## Regra de visibilidade pública (2026-10-28, decisão do root)
+
+O repo é **PÚBLICO** (decisão pós-quota Actions: repo público não consome minutos CI, $0; reversível). Com a visibilidade pública, a regra de redistribuição do evento vira lei dura deste pipeline:
+
+- **NUNCA entra no repo** (código, evidência, DVC, planning): conteúdo de **issue** real (problem statement), **gold patch**, **test patch** — o Competition Data. 
+- **Pode entrar:** schema abstrato (nomes de campo, tipos, contagens), estatísticas, hashes, trechos de código PRÓPRIO.
+- Quem escreve evidência com dataset na mão descreve a FORMA, nunca o CONTEÚDO. Achado que exija mostrar conteúdo vai para o vault privado, não pro repo.
 
 ## Regras de deploy (submissão ao Kaggle)
 
